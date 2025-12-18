@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Election Quest Map</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* --- CORE SCALING STYLES (ยกมาจากโค้ดต้นแบบของคุณ) --- */
+        html {
+            /* font-size จะถูกกำหนดโดย JS adjustmentGameScaling */
+        }
+        body {
+            font-family: 'Mali', cursive; /* เปลี่ยนฟอนต์หลักให้น่ารัก */
+            background-color: #202020;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .game-frame {
+            position: relative;
+            overflow: hidden;
+            background-color: #ffffff;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            width: 95vw;
+            height: calc(95vw * 1708 / 960);
+            max-width: 500px; /* ปรับ max-width ให้เหมาะสมกับ Maps */
+            max-height: 890px;
+            margin: auto;
+            border-radius: 2rem; /* มุมโค้งเหมือนมือถือ */
+        }
+        /* ถ้าจอสูง ให้ยึดความสูงเป็นหลัก */
+        @media (min-aspect-ratio: 960/1708) {
+            .game-frame {
+                height: 90vh;
+                width: calc(90vh * 960 / 1708);
+            }
+        }
+
+        /* --- SCREEN MANAGEMENT --- */
+        .game-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.4s ease-in-out;
+            background-color: #f0f4f8;
+        }
+        .game-screen.active {
+            opacity: 1; visibility: visible;
+        }
+
+        /* --- MAP STYLES --- */
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        /* ปรับแต่งปุ่ม Zoom ของ Leaflet ให้เข้ากับธีม */
+        .leaflet-control-zoom {
+            border: none !important;
+            margin-bottom: 15rem !important; /* ดันขึ้นหนี UI ด้านล่าง */
+            margin-right: 2rem !important;
+        }
+        .leaflet-control-zoom a {
+            background-color: #FFD700 !important;
+            color: #333 !important;
+            border-radius: 1rem !important;
+            width: 4rem !important;
+            height: 4rem !important;
+            line-height: 4rem !important;
+            font-size: 2.5rem !important;
+            box-shadow: 0 0.5rem 0 #cba800 !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* --- CUSTOM UI ELEMENTS (REM UNITS) --- */
+        .start-btn {
+            background-color: #FF6B6B;
+            color: white;
+            font-size: 3.5rem;
+            padding: 1.5rem 4rem;
+            border-radius: 5rem;
+            border: none;
+            box-shadow: 0 0.8rem 0 #D64545;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .start-btn:active {
+            transform: translateY(0.5rem);
+            box-shadow: 0 0.3rem 0 #D64545;
+        }
+
+        /* --- POPUP CARD STYLE --- */
+        .info-popup-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex; justify-content: center; align-items: flex-end;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .info-popup-overlay.visible {
+            opacity: 1; visibility: visible;
+        }
+        .info-card {
+            background: white;
+            width: 100%;
+            height: 75%; /* สูง 75% ของจอ */
+            border-radius: 4rem 4rem 0 0;
+            padding: 3rem;
+            box-sizing: border-box;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            display: flex; flex-direction: column;
+            position: relative;
+        }
+        .info-popup-overlay.visible .info-card {
+            transform: translateY(0);
+        }
+
+        .close-btn {
+            position: absolute; top: 2rem; right: 2rem;
+            background: #eee; width: 4rem; height: 4rem;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; color: #555; cursor: pointer;
+        }
+
+        /* Gallery Scroll */
+        .gallery-scroll {
+            display: flex; overflow-x: auto; gap: 1.5rem;
+            padding: 1rem 0; margin-top: 2rem;
+            scroll-snap-type: x mandatory;
+        }
+        .gallery-scroll::-webkit-scrollbar { display: none; }
+        .gallery-scroll img {
+            height: 15rem; width: auto;
+            border-radius: 1.5rem;
+            scroll-snap-align: start;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+        }
+
+        /* Categories Badge */
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        .badge-out { background: #FFE5D9; color: #D64545; }
+        .badge-in { background: #E3F2FD; color: #1E88E5; }
+
+        /* Filter Tabs */
+        .filter-container {
+            position: absolute; top: 2rem; left: 0; width: 100%;
+            display: flex; justify-content: center; gap: 1rem;
+            z-index: 500;
+            padding: 0 2rem;
+            box-sizing: border-box;
+        }
+        .filter-btn {
+            background: white; border: 2px solid #ddd;
+            padding: 0.8rem 1.5rem; border-radius: 2rem;
+            font-size: 1.6rem; font-weight: bold; color: #555;
+            box-shadow: 0 0.4rem 0.5rem rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .filter-btn.active {
+            background: #4ECDC4; border-color: #4ECDC4; color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="game-frame">
+        
+        <div id="start-screen" class="game-screen active" style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); justify-content: center; align-items: center; text-align: center;">
+            <div style="font-size: 8rem;">🗳️</div>
+            <h1 style="font-size: 5rem; color: #333; margin: 2rem 0;">แผนที่<br>จุดเลือกตั้ง</h1>
+            <p style="font-size: 2rem; color: #666; margin-bottom: 5rem;">ค้นหา 130 หน่วยเลือกตั้ง<br>ในรูปแบบแผนที่</p>
+            <button class="start-btn" onclick="goToMap()">เริ่มค้นหา</button>
+        </div>
+
+        <div id="map-screen" class="game-screen">
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterMap('all', this)">ทั้งหมด</button>
+                <button class="filter-btn" onclick="filterMap('out', this)">ภายนอก</button>
+                <button class="filter-btn" onclick="filterMap('in', this)">ภายใน</button>
+            </div>
+
+            <div id="map"></div>
+        </div>
+
+        <div id="info-overlay" class="info-popup-overlay" onclick="closePopup(event)">
+            <div class="info-card" onclick="event.stopPropagation()"> <div class="close-btn" onclick="closePopupDirect()">✕</div>
+                
+                <h2 id="p-name" style="font-size: 3rem; font-weight: 700; color: #333; line-height: 1.2;">ชื่อสถานที่</h2>
+                <p id="p-sub" style="font-size: 2rem; color: #888; margin-top: 0.5rem;">รายละเอียดสถานที่ย่อย</p>
+                
+                <div style="margin-top: 2rem;">
+                    <span id="p-type" class="badge badge-out">ประเภท</span>
+                    <span id="p-unit" style="font-size: 1.8rem; color: #555;">จำนวนหน่วย</span>
+                </div>
+
+                <div id="p-gallery" class="gallery-scroll"></div>
+
+                <div style="margin-top: 2rem; padding: 2rem; background: #f9f9f9; border-radius: 2rem; border: 2px dashed #ddd;">
+                    <p style="font-size: 1.6rem; font-weight: 700; color: #555;">Note:</p>
+                    <p id="p-note" style="font-size: 1.8rem; color: #333;">รายละเอียดเพิ่มเติม...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // --- 1. CONFIG & DATA ---
+        const units = [
+            {
+                "id": 1,
+                "name": "ลานจอดรถตลาดยาสูบ",
+                "name_details": "บริเวณใกล้สหภาพแรงงาน",
+                "unit_count": "3 หน่วย",
+                "lat": 13.724167, "lng": 100.554444,
+                "images": ["https://placehold.co/400x300/orange/white?text=Img1", "https://placehold.co/400x300/orange/white?text=Img2"],
+                "details_range": "หน่วยที่ 1-3",
+                "location_type": "ภายนอกอาคาร",
+                "note": "จุดสังเกตคือเต็นท์สีขาวขนาดใหญ่"
+            },
+            {
+                "id": 2,
+                "name": "โรงเรียนวัดคลองเตย",
+                "name_details": "อาคารเรียน 1 ชั้นล่าง",
+                "unit_count": "1 หน่วย",
+                "lat": 13.718500, "lng": 100.559200,
+                "images": [],
+                "details_range": "หน่วยที่ 4",
+                "location_type": "ภายในอาคาร",
+                "note": "ทางเข้าอยู่ด้านข้างโรงเรียน"
+            },
+             {
+                "id": 3,
+                "name": "วัดสะพาน",
+                "name_details": "ลานวัด",
+                "unit_count": "2 หน่วย",
+                "lat": 13.710000, "lng": 100.590000,
+                "images": ["https://placehold.co/400x300/green/white?text=Map"],
+                "details_range": "หน่วยที่ 5-6",
+                "location_type": "ภายนอกอาคาร",
+                "note": "-"
+            }
+        ];
+
+        let map, markers = [];
+
+        // --- 2. SCALING LOGIC (Core Game System) ---
+        function adjustGameScaling() {
+            const gameFrame = document.querySelector('.game-frame');
+            if (!gameFrame) return;
+
+            // Base width is 960 (from your reference code)
+            const designWidth = 960;
+            const currentWidth = gameFrame.offsetWidth;
+            
+            // Calculate ratio
+            const scaleRatio = currentWidth / designWidth;
+            // Set root font size so 1rem scales with the container
+            // 10px base * ratio. E.g., if full width, 1rem = 10px.
+            const rootFontSize = 10 * scaleRatio; 
+
+            document.documentElement.style.fontSize = `${rootFontSize}px`;
+            
+            // Invalidate map size if map exists (to fix rendering issues on resize)
+            if(map) setTimeout(() => map.invalidateSize(), 300);
+        }
+
+        window.addEventListener('load', () => {
+            adjustGameScaling();
+            initMap(); // โหลดแผนที่รอไว้เลย
+        });
+        window.addEventListener('resize', adjustGameScaling);
+
+        // --- 3. NAVIGATION ---
+        function goToMap() {
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('map-screen').classList.add('active');
+            
+            // Leaflet needs a moment to realize container size changed
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 500);
+        }
+
+        // --- 4. MAP LOGIC ---
+        function initMap() {
+            // สร้างแผนที่
+            map = L.map('map', { zoomControl: true }).setView([13.720, 100.555], 14);
+
+            // ใช้ Tile ที่ดูสะอาดตา (CartoDB Positron) หรือ OpenStreetMap
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '©OpenStreetMap, ©CartoDB',
+                maxZoom: 19
+            }).addTo(map);
+
+            // วนลูปสร้าง Marker
+            renderMarkers(units);
+        }
+
+        function renderMarkers(data) {
+            // ล้าง Marker เก่า
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            data.forEach(unit => {
+                // เลือกสีไอคอนตามประเภท
+                let typeColor = unit.location_type.includes("ภายนอก") ? "red" : "blue";
+                
+                // สร้าง Custom Icon (Emoji Pin) ให้ดูน่ารัก
+                let customIcon = L.divIcon({
+                    className: 'custom-pin',
+                    html: `<div style="
+                        background-color: ${typeColor === 'red' ? '#FF6B6B' : '#4ECDC4'};
+                        width: 3rem; height: 3rem;
+                        border-radius: 50%;
+                        border: 0.3rem solid white;
+                        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3);
+                        display: flex; justify-content: center; align-items: center;
+                        font-size: 1.5rem;
+                    ">${typeColor === 'red' ? '☀️' : '🏢'}</div>`,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15] // จุดชี้
+                });
+
+                let marker = L.marker([unit.lat, unit.lng], { icon: customIcon })
+                    .addTo(map)
+                    .on('click', () => openPopup(unit));
+                
+                markers.push(marker);
+            });
+        }
+
+        // --- 5. POPUP SYSTEM (Overlay) ---
+        function openPopup(data) {
+            const overlay = document.getElementById('info-overlay');
+            
+            // ใส่ข้อมูล (DOM Manipulation)
+            document.getElementById('p-name').innerText = data.name;
+            document.getElementById('p-sub').innerText = data.name_details;
+            document.getElementById('p-unit').innerText = data.unit_count;
+            document.getElementById('p-note').innerText = data.note;
+
+            // จัดการ Badge
+            const typeBadge = document.getElementById('p-type');
+            if(data.location_type.includes("ภายนอก")) {
+                typeBadge.className = "badge badge-out";
+                typeBadge.innerText = "ภายนอกอาคาร";
+            } else {
+                typeBadge.className = "badge badge-in";
+                typeBadge.innerText = "ภายในอาคาร";
+            }
+
+            // จัดการ Gallery
+            const gallery = document.getElementById('p-gallery');
+            gallery.innerHTML = ''; // ล้างรูปเก่า
+            
+            if (data.images.length > 0) {
+                data.images.forEach(img => {
+                    gallery.innerHTML += `<img src="${img}" onclick="window.open('${img}')">`;
+                });
+            } else {
+                gallery.innerHTML = `<div style="width:100%; height:10rem; background:#eee; border-radius:1.5rem; display:flex; justify-content:center; align-items:center; color:#999; font-size:1.6rem;">ไม่มีรูปภาพ</div>`;
+            }
+
+            overlay.classList.add('visible');
+        }
+
+        function closePopup(e) {
+            // ถ้ากดที่พื้นหลังสีดำ (Overlay) ให้ปิด
+            if (e.target.id === 'info-overlay') {
+                closePopupDirect();
+            }
+        }
+        
+        function closePopupDirect() {
+            document.getElementById('info-overlay').classList.remove('visible');
+        }
+
+        // --- 6. FILTER SYSTEM ---
+        function filterMap(type, btn) {
+            // ปรับปุ่ม Active
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (type === 'all') {
+                renderMarkers(units);
+            } else if (type === 'out') {
+                const filtered = units.filter(u => u.location_type.includes("ภายนอก"));
+                renderMarkers(filtered);
+            } else if (type === 'in') {
+                const filtered = units.filter(u => u.location_type.includes("ภายใน"));
+                renderMarkers(filtered);
+            }
+        }
+
+    </script>
+</body>
+</html>
