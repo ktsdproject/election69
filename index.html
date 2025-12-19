@@ -13,13 +13,14 @@
         /* --- 1. CORE LAYOUT --- */
         html { /* Font size handled by JS */ }
         body {
-            font-family: 'Mali', cursive;
+            font-family: 'Sarabun', sans-serif; /* ใช้ฟอนต์สารบัญให้อ่านง่ายขึ้นกับข้อมูลทางการ */
             background-color: #202020;
             display: flex; justify-content: center; align-items: center;
             height: 100vh; margin: 0;
-            /* 2. แก้ไขให้เลื่อนจอได้เมื่อซูม */
-            overflow: auto; 
+            overflow: auto; /* เลื่อนจอได้เมื่อซูม */
         }
+
+        h1, h2, h3, .nav-tab, .badge { font-family: 'Mali', cursive; } /* หัวข้อใช้ฟอนต์ลายมือ */
 
         .game-frame {
             position: relative; overflow: hidden;
@@ -29,7 +30,6 @@
             max-width: 500px; max-height: 890px;
             margin: auto; border-radius: 2rem;
             display: flex; flex-direction: column;
-            /* ป้องกันไม่ให้ตัว Frame ขยับเละเทะตอนซูม */
             transform-origin: center top; 
         }
         @media (min-aspect-ratio: 960/1708) {
@@ -43,7 +43,7 @@
         }
         .nav-tab {
             flex: 1; border: none; background: #f4f6f8;
-            font-family: 'Mali', cursive; font-size: 1.8rem; font-weight: bold; color: #888;
+            font-size: 1.8rem; font-weight: bold; color: #888;
             cursor: pointer; position: relative; transition: all 0.2s;
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             border-bottom: 0.4rem solid transparent;
@@ -80,8 +80,8 @@
         .t-status-active .t-circle { background: #FF9800; animation: pulse 1.5s infinite; }
         .t-status-future .t-circle { background: #ddd; color: #aaa; }
         
-        .t-content h3 { font-size: 2rem; font-weight: bold; margin: 0; color: #333; }
-        .t-content p { font-size: 1.6rem; color: #666; margin: 0.2rem 0; }
+        .t-content h3 { font-size: 1.9rem; font-weight: bold; margin: 0; color: #333; line-height: 1.3; }
+        .t-content p { font-size: 1.5rem; color: #666; margin: 0.4rem 0; line-height: 1.4; }
         .t-content .t-date { font-size: 1.4rem; font-weight: 600; color: #888; margin-bottom: 0.5rem; display: block; }
         .t-status-active .t-content h3, .t-status-active .t-content .t-date { color: #FF9800; }
 
@@ -102,10 +102,10 @@
             pointer-events: auto; background: white; border: 0.2rem solid #ddd;
             padding: 0.8rem 1.5rem; border-radius: 2rem; font-size: 1.6rem; font-weight: bold; color: #555;
             box-shadow: 0 0.4rem 0.5rem rgba(0,0,0,0.1); cursor: pointer;
+            font-family: 'Mali', cursive;
         }
         .filter-btn.active { background: #4ECDC4; border-color: #4ECDC4; color: white; }
         
-        /* Map Controls */
         .leaflet-control-zoom { border: none !important; margin-bottom: 15rem !important; margin-right: 2rem !important; }
         .leaflet-control-zoom a {
             background-color: #FFD700 !important; color: #333 !important;
@@ -164,12 +164,12 @@
             <div id="view-timeline" class="tab-view active">
                 <div class="timeline-header">
                     <h1 style="font-size: 3rem; margin:0; color:#333;">ปฏิทินเลือกตั้ง</h1>
-                    <p style="font-size: 1.6rem; color:#888;">ติดตามสถานะและวันสำคัญ</p>
+                    <p style="font-size: 1.6rem; color:#888;">พ.ศ. 2568 - 2569</p>
                 </div>
                 <div id="timeline-container"></div>
                 <button onclick="document.querySelectorAll('.nav-tab')[1].click()" 
                     style="width: 100%; font-size: 2rem; padding: 1.5rem; margin-top: 2rem; margin-bottom: 2rem;
-                        background: #eee; color: #555; border: none; border-radius: 2rem; font-weight: bold; cursor: pointer;">
+                        background: #eee; color: #555; border: none; border-radius: 2rem; font-weight: bold; cursor: pointer; font-family: 'Mali';">
                     ไปที่แผนที่ 👉
                 </button>
             </div>
@@ -206,14 +206,97 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // --- DATA ---
+        // --- DATA SECTION ---
+        
+        // ข้อมูล Timeline (อัปเดตใหม่ตามที่ขอ)
         const timelineData = [
-            { dateText: "12 ธ.ค. 68", title: "ยุบสภา", desc: "ประกาศยุบสภาเพื่อเตรียมเลือกตั้งใหม่", startDate: new Date("2025-12-12T00:00:00"), endDate: new Date("2025-12-12T23:59:59") },
-            { dateText: "15 ธ.ค. 68", title: "กกต. ประกาศเลือกตั้ง", desc: "กกต. ประกาศกำหนดวันเลือกตั้ง", startDate: new Date("2025-12-15T00:00:00"), endDate: new Date("2025-12-15T23:59:59") },
-            { dateText: "27-31 ธ.ค. 68", title: "วันรับสมัคร ส.ส.", desc: "เปิดรับสมัคร (08.30 - 16.30 น.)", startDate: new Date("2025-12-27T08:30:00"), endDate: new Date("2025-12-31T16:30:00") },
-            { dateText: "1 ก.พ. 69", title: "วันเลือกตั้ง 🗳️", desc: "วันลงคะแนนเสียง (08.00 - 17.00 น.)", startDate: new Date("2026-02-01T08:00:00"), endDate: new Date("2026-02-01T17:00:00") }
+            {
+                dateText: "12 ธ.ค. 68",
+                title: "พ.ร.ฎ.ยุบสภาฯ มีผลบังคับใช้",
+                desc: "พระราชกฤษฎีกายุบสภาผู้แทนราษฎร พ.ศ.2568 เริ่มมีผล",
+                startDate: new Date("2025-12-12T00:00:00"),
+                endDate: new Date("2025-12-12T23:59:59")
+            },
+            {
+                dateText: "15 ธ.ค. 68",
+                title: "กกต. ประกาศให้มีการเลือกตั้ง",
+                desc: "",
+                startDate: new Date("2025-12-15T00:00:00"),
+                endDate: new Date("2025-12-15T23:59:59")
+            },
+            {
+                dateText: "20 ธ.ค. 68 - 5 ม.ค. 69",
+                title: "ลงทะเบียนเลือกตั้งล่วงหน้า",
+                desc: "ทั้งในเขต นอกเขต และนอกราชอาณาจักร",
+                startDate: new Date("2025-12-20T00:00:00"),
+                endDate: new Date("2026-01-05T23:59:59")
+            },
+            {
+                dateText: "27-31 ธ.ค. 68",
+                title: "รับสมัคร สส. แบ่งเขต",
+                desc: "เวลา 08.30-16.30 น. ณ สถานที่ที่ผู้อำนวยการเลือกตั้งประจำเขตกำหนด",
+                startDate: new Date("2025-12-27T08:30:00"),
+                endDate: new Date("2025-12-31T16:30:00")
+            },
+            {
+                dateText: "28-31 ธ.ค. 68",
+                title: "รับสมัคร สส. บัญชีรายชื่อ",
+                desc: "ณ ห้องวายุภักษ์ฮอลล์ รร.เซ็นทารา ไลฟ์ ศูนย์ราชการฯ แจ้งวัฒนะ (เฉพาะ 31 ธ.ค. ปิด 16.00 น.)",
+                startDate: new Date("2025-12-28T08:30:00"),
+                endDate: new Date("2025-12-31T16:00:00")
+            },
+            {
+                dateText: "7 ม.ค. 69",
+                title: "ประกาศรายชื่อผู้สมัคร",
+                desc: "ทั้งแบบแบ่งเขต และแบบบัญชีรายชื่อ",
+                startDate: new Date("2026-01-07T00:00:00"),
+                endDate: new Date("2026-01-07T23:59:59")
+            },
+            {
+                dateText: "18 ม.ค. 69",
+                title: "วันสุดท้ายแจ้งรายชื่อผู้มีสิทธิ์",
+                desc: "นายทะเบียนแจ้งรายชื่อผู้มีสิทธิ์เลือกตั้งไปยังเจ้าบ้าน",
+                startDate: new Date("2026-01-18T00:00:00"),
+                endDate: new Date("2026-01-18T23:59:59")
+            },
+            {
+                dateText: "28 ม.ค. 69",
+                title: "วันสุดท้าย เพิ่มชื่อ-ถอนชื่อ",
+                desc: "ยื่นคำร้องขอเพิ่มชื่อหรือถอนชื่อผู้มีสิทธิ์เลือกตั้ง",
+                startDate: new Date("2026-01-28T00:00:00"),
+                endDate: new Date("2026-01-28T23:59:59")
+            },
+            {
+                dateText: "1 ก.พ. 69",
+                title: "วันเลือกตั้งล่วงหน้า",
+                desc: "(08.00-17.00 น.) ทั้งใน/นอกเขต และผู้พิการ/ผู้สูงอายุ",
+                startDate: new Date("2026-02-01T08:00:00"),
+                endDate: new Date("2026-02-01T17:00:00")
+            },
+            {
+                dateText: "1-7 ก.พ. 69",
+                title: "แจ้งเหตุไม่อาจไปใช้สิทธิ์ (รอบ 1)",
+                desc: "ระยะเวลา 7 วัน ก่อนวันเลือกตั้ง",
+                startDate: new Date("2026-02-01T00:00:00"),
+                endDate: new Date("2026-02-07T23:59:59")
+            },
+            {
+                dateText: "8 ก.พ. 69",
+                title: "⭐ วันเลือกตั้ง ⭐",
+                desc: "(08.00-17.00 น.) โปรดเตรียมบัตรประชาชน",
+                startDate: new Date("2026-02-08T08:00:00"),
+                endDate: new Date("2026-02-08T17:00:00")
+            },
+            {
+                dateText: "9-15 ก.พ. 69",
+                title: "แจ้งเหตุไม่อาจไปใช้สิทธิ์ (รอบ 2)",
+                desc: "ระยะเวลา 7 วัน หลังวันเลือกตั้ง",
+                startDate: new Date("2026-02-09T00:00:00"),
+                endDate: new Date("2026-02-15T23:59:59")
+            }
         ];
 
+        // ข้อมูลจุดเลือกตั้ง (ตัวอย่าง)
         const units = [
             { id: 1, name: "ลานจอดรถตลาดยาสูบ", name_details: "บริเวณใกล้สหภาพแรงงาน", unit_count: "3 หน่วย", lat: 13.724167, lng: 100.554444, images: ["https://placehold.co/400x300/orange/white?text=จุดที่1"], details_range: "หน่วยที่ 1-3", location_type: "ภายนอกอาคาร", note: "เต็นท์สีขาวขนาดใหญ่" },
             { id: 2, name: "โรงเรียนวัดคลองเตย", name_details: "อาคารเรียน 1 ชั้นล่าง", unit_count: "1 หน่วย", lat: 13.718500, lng: 100.559200, images: [], details_range: "หน่วยที่ 4", location_type: "ภายในอาคาร", note: "-" },
@@ -235,8 +318,7 @@
             const gameFrame = document.querySelector('.game-frame');
             if (!gameFrame) return;
             const designWidth = 960;
-            // ใช้ความกว้างของ Frame แทน innerWidth เพื่อให้ scaling สัมพันธ์กับตัวกล่อง
-            const currentWidth = gameFrame.offsetWidth; 
+            const currentWidth = gameFrame.offsetWidth;
             const scaleRatio = currentWidth / designWidth;
             document.documentElement.style.fontSize = `${10 * scaleRatio}px`;
             if(map) setTimeout(() => map.invalidateSize(), 300);
@@ -245,12 +327,27 @@
         // --- TIMELINE ---
         function initTimeline() {
             const container = document.getElementById('timeline-container');
-            const now = new Date();
+            const now = new Date(); // ใช้วันปัจจุบัน
+            // const now = new Date("2025-12-28T10:00:00"); // ปลดเพื่อทดสอบวันที่
+            
             let html = '';
             timelineData.forEach(item => {
                 let statusClass = now > item.endDate ? 't-status-done' : (now >= item.startDate ? 't-status-active' : 't-status-future');
                 let icon = now > item.endDate ? '✓' : (now >= item.startDate ? '🔥' : '🔒');
-                html += `<div class="timeline-item ${statusClass}"><div class="t-circle">${icon}</div><div class="t-content"><span class="t-date">${item.dateText}</span><h3>${item.title}</h3>${item.desc ? `<p>${item.desc}</p>` : ''}</div></div>`;
+                
+                // เน้นสีข้อความถ้าเป็น Active
+                let titleStyle = statusClass === 't-status-active' ? 'color:#FF9800;' : '';
+
+                html += `
+                    <div class="timeline-item ${statusClass}">
+                        <div class="t-circle">${icon}</div>
+                        <div class="t-content">
+                            <span class="t-date">${item.dateText}</span>
+                            <h3 style="${titleStyle}">${item.title}</h3>
+                            ${item.desc ? `<p>${item.desc}</p>` : ''}
+                        </div>
+                    </div>
+                `;
             });
             container.innerHTML = html;
         }
