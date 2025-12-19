@@ -10,33 +10,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* --- 1. CORE LAYOUT --- */
-        html { /* Font size handled by JS */ }
+        /* =========================================
+           1. SHARED STYLES (Base)
+           ========================================= */
+        html { font-size: 10px; } /* Default base size */
         body {
-            font-family: 'Sarabun', sans-serif; /* ใช้ฟอนต์สารบัญให้อ่านง่ายขึ้นกับข้อมูลทางการ */
+            font-family: 'Sarabun', sans-serif;
             background-color: #202020;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; margin: 0;
-            overflow: auto; /* เลื่อนจอได้เมื่อซูม */
+            margin: 0;
+            overflow: hidden; /* Desktop default, mobile handles differently */
         }
+        h1, h2, h3, .nav-tab, .badge, .filter-btn { font-family: 'Mali', cursive; }
 
-        h1, h2, h3, .nav-tab, .badge { font-family: 'Mali', cursive; } /* หัวข้อใช้ฟอนต์ลายมือ */
-
+        /* =========================================
+           2. MOBILE VIEW (Default / App Style)
+           - บังคับใช้เมื่อหน้าจอเล็กกว่า 1024px
+           ========================================= */
         .game-frame {
             position: relative; overflow: hidden;
             background-color: #f0f4f8;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            /* Mobile Default Setup */
             width: 95vw; height: calc(95vw * 1708 / 960);
             max-width: 500px; max-height: 890px;
             margin: auto; border-radius: 2rem;
             display: flex; flex-direction: column;
             transform-origin: center top; 
         }
-        @media (min-aspect-ratio: 960/1708) {
-            .game-frame { height: 90vh; width: calc(90vh * 960 / 1708); }
+
+        /* Center the frame on mobile */
+        body.mobile-mode {
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: auto;
         }
 
-        /* --- 2. TOP TAB BAR --- */
+        /* Top Nav (Tabs) */
         .top-nav {
             flex-shrink: 0; height: 6rem; background: #fff; display: flex;
             box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.05); z-index: 100;
@@ -48,28 +56,26 @@
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             border-bottom: 0.4rem solid transparent;
         }
-        .nav-tab:hover { background: #eee; }
         .nav-tab.active { background: #fff; color: #4ECDC4; border-bottom: 0.4rem solid #4ECDC4; }
 
-        /* --- 3. CONTENT AREA --- */
-        .content-area { flex: 1; position: relative; overflow: hidden; }
+        /* Content Area & Views */
+        .content-area { flex: 1; position: relative; overflow: hidden; display: flex; }
+        
         .tab-view {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; flex-direction: column;
+            width: 100%; height: 100%;
+            display: none; flex-direction: column; /* Mobile: Hide by default */
         }
-        .tab-view.active { display: flex; }
+        .tab-view.active { display: flex; } /* Mobile: Show only active */
 
-        /* --- 4. TIMELINE VIEW --- */
+        /* Timeline Specific */
         #view-timeline { overflow-y: auto; padding: 2rem; background: #fff; }
         .timeline-header { text-align: center; margin-bottom: 3rem; margin-top: 1rem; }
-        
         .timeline-item { display: flex; gap: 1.5rem; position: relative; padding-bottom: 3rem; }
         .timeline-item::before {
             content: ''; position: absolute; left: 1.4rem; top: 3.5rem; bottom: 0;
             width: 0.3rem; background: #e0e0e0; z-index: 0;
         }
         .timeline-item:last-child::before { display: none; }
-
         .t-circle {
             width: 3.5rem; height: 3.5rem; border-radius: 50%; flex-shrink: 0; z-index: 1;
             display: flex; justify-content: center; align-items: center;
@@ -79,19 +85,14 @@
         .t-status-done .t-circle { background: #4CAF50; }
         .t-status-active .t-circle { background: #FF9800; animation: pulse 1.5s infinite; }
         .t-status-future .t-circle { background: #ddd; color: #aaa; }
-        
         .t-content h3 { font-size: 1.9rem; font-weight: bold; margin: 0; color: #333; line-height: 1.3; }
         .t-content p { font-size: 1.5rem; color: #666; margin: 0.4rem 0; line-height: 1.4; }
         .t-content .t-date { font-size: 1.4rem; font-weight: 600; color: #888; margin-bottom: 0.5rem; display: block; }
-        .t-status-active .t-content h3, .t-status-active .t-content .t-date { color: #FF9800; }
+        .t-status-active .t-content h3 { color: #FF9800; }
+        
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); } 70% { box-shadow: 0 0 0 1rem rgba(255, 152, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); } }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
-            70% { box-shadow: 0 0 0 1rem rgba(255, 152, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
-        }
-
-        /* --- 5. MAP VIEW --- */
+        /* Map Specific */
         #map { width: 100%; height: 100%; z-index: 1; }
         .filter-container {
             position: absolute; top: 2rem; left: 0; width: 100%;
@@ -102,24 +103,20 @@
             pointer-events: auto; background: white; border: 0.2rem solid #ddd;
             padding: 0.8rem 1.5rem; border-radius: 2rem; font-size: 1.6rem; font-weight: bold; color: #555;
             box-shadow: 0 0.4rem 0.5rem rgba(0,0,0,0.1); cursor: pointer;
-            font-family: 'Mali', cursive;
         }
         .filter-btn.active { background: #4ECDC4; border-color: #4ECDC4; color: white; }
-        
-        .leaflet-control-zoom { border: none !important; margin-bottom: 15rem !important; margin-right: 2rem !important; }
         .leaflet-control-zoom a {
             background-color: #FFD700 !important; color: #333 !important;
             border-radius: 1rem !important; width: 4rem !important; height: 4rem !important;
             line-height: 4rem !important; font-size: 2.5rem !important;
-            box-shadow: 0 0.5rem 0 #cba800 !important; margin-bottom: 1rem !important;
         }
 
-        /* --- 6. POPUP DETAILS --- */
+        /* Popup */
         .info-popup-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
             z-index: 1000; display: flex; justify-content: center; align-items: flex-end;
-            opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; visibility: hidden; transition: all 0.3s;
         }
         .info-popup-overlay.visible { opacity: 1; visibility: visible; }
         .info-card {
@@ -129,30 +126,73 @@
             display: flex; flex-direction: column; position: relative;
         }
         .info-popup-overlay.visible .info-card { transform: translateY(0); }
-        .close-btn-circle {
-            position: absolute; top: 2rem; right: 2rem;
-            background: #eee; width: 4rem; height: 4rem;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; color: #555; cursor: pointer;
-        }
-        .gallery-scroll {
-            display: flex; overflow-x: auto; gap: 1.5rem; padding: 1rem 0; margin-top: 2rem;
-            scroll-snap-type: x mandatory;
-        }
-        .gallery-scroll::-webkit-scrollbar { display: none; }
-        .gallery-scroll img {
-            height: 15rem; width: auto; border-radius: 1.5rem;
-            scroll-snap-align: start; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
-        }
+        .close-btn-circle { position: absolute; top: 2rem; right: 2rem; background: #eee; width: 4rem; height: 4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; }
+        .gallery-scroll { display: flex; overflow-x: auto; gap: 1.5rem; padding: 1rem 0; margin-top: 2rem; }
+        .gallery-scroll img { height: 15rem; width: auto; border-radius: 1.5rem; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1); }
         .badge { display: inline-block; padding: 0.5rem 1.5rem; border-radius: 2rem; font-size: 1.8rem; font-weight: bold; margin-right: 1rem; }
         .badge-out { background: #FFE5D9; color: #D64545; }
         .badge-in { background: #E3F2FD; color: #1E88E5; }
 
+        /* =========================================
+           3. DESKTOP / TABLET LANDSCAPE (>1024px)
+           - ปลดล็อก layout ให้เต็มจอ
+           - ซ้าย: Timeline, ขวา: Map
+           ========================================= */
+        @media (min-width: 1024px) {
+            body { 
+                overflow: hidden; /* Desktop ไม่ต้อง Scroll body หลัก */
+                background-color: #f0f4f8; /* Background เต็มจอ */
+            }
+            
+            .game-frame {
+                /* Reset Mobile Constraints */
+                width: 100vw; height: 100vh;
+                max-width: none; max-height: none;
+                margin: 0; border-radius: 0;
+                box-shadow: none;
+            }
+
+            .top-nav { display: none; } /* ซ่อน Tab Bar บน Desktop */
+
+            .content-area {
+                flex-direction: row; /* เรียงแนวนอน */
+            }
+
+            /* --- Left Panel: Timeline --- */
+            #view-timeline {
+                display: block !important; /* บังคับโชว์ตลอด */
+                width: 35%; /* ความกว้าง Timeline */
+                min-width: 350px;
+                max-width: 500px;
+                border-right: 1px solid #ddd;
+                height: 100%;
+                z-index: 2;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            }
+            .mobile-only-btn { display: none; } /* ซ่อนปุ่ม 'ไปที่แผนที่' */
+
+            /* --- Right Panel: Map --- */
+            #view-map {
+                display: block !important; /* บังคับโชว์ตลอด */
+                flex: 1; /* กินพื้นที่ที่เหลือ */
+                height: 100%;
+                position: relative;
+            }
+
+            /* Popup บน Desktop ให้ลอยตรงกลางสวยๆ */
+            .info-card {
+                width: 500px; height: auto; max-height: 80vh;
+                border-radius: 2rem;
+                transform: translateY(20px); opacity: 0;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            }
+            .info-popup-overlay { align-items: center; }
+            .info-popup-overlay.visible .info-card { transform: translateY(0); opacity: 1; }
+        }
+
     </style>
 </head>
-<body>
-
-    <div class="game-frame">
+<body class="mobile-mode"> <div class="game-frame">
         
         <nav class="top-nav">
             <button class="nav-tab active" onclick="switchTab('timeline', this)">📅 ไทม์ไลน์</button>
@@ -167,7 +207,7 @@
                     <p style="font-size: 1.6rem; color:#888;">พ.ศ. 2568 - 2569</p>
                 </div>
                 <div id="timeline-container"></div>
-                <button onclick="document.querySelectorAll('.nav-tab')[1].click()" 
+                <button class="mobile-only-btn" onclick="document.querySelectorAll('.nav-tab')[1].click()" 
                     style="width: 100%; font-size: 2rem; padding: 1.5rem; margin-top: 2rem; margin-bottom: 2rem;
                         background: #eee; color: #555; border: none; border-radius: 2rem; font-weight: bold; cursor: pointer; font-family: 'Mali';">
                     ไปที่แผนที่ 👉
@@ -207,96 +247,21 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // --- DATA SECTION ---
-        
-        // ข้อมูล Timeline (อัปเดตใหม่ตามที่ขอ)
         const timelineData = [
-            {
-                dateText: "12 ธ.ค. 68",
-                title: "พ.ร.ฎ.ยุบสภาฯ มีผลบังคับใช้",
-                desc: "พระราชกฤษฎีกายุบสภาผู้แทนราษฎร พ.ศ.2568 เริ่มมีผล",
-                startDate: new Date("2025-12-12T00:00:00"),
-                endDate: new Date("2025-12-12T23:59:59")
-            },
-            {
-                dateText: "15 ธ.ค. 68",
-                title: "กกต. ประกาศให้มีการเลือกตั้ง",
-                desc: "",
-                startDate: new Date("2025-12-15T00:00:00"),
-                endDate: new Date("2025-12-15T23:59:59")
-            },
-            {
-                dateText: "20 ธ.ค. 68 - 5 ม.ค. 69",
-                title: "ลงทะเบียนเลือกตั้งล่วงหน้า",
-                desc: "ทั้งในเขต นอกเขต และนอกราชอาณาจักร",
-                startDate: new Date("2025-12-20T00:00:00"),
-                endDate: new Date("2026-01-05T23:59:59")
-            },
-            {
-                dateText: "27-31 ธ.ค. 68",
-                title: "รับสมัคร สส. แบ่งเขต",
-                desc: "เวลา 08.30-16.30 น. ณ สถานที่ที่ผู้อำนวยการเลือกตั้งประจำเขตกำหนด",
-                startDate: new Date("2025-12-27T08:30:00"),
-                endDate: new Date("2025-12-31T16:30:00")
-            },
-            {
-                dateText: "28-31 ธ.ค. 68",
-                title: "รับสมัคร สส. บัญชีรายชื่อ",
-                desc: "ณ ห้องวายุภักษ์ฮอลล์ รร.เซ็นทารา ไลฟ์ ศูนย์ราชการฯ แจ้งวัฒนะ (เฉพาะ 31 ธ.ค. ปิด 16.00 น.)",
-                startDate: new Date("2025-12-28T08:30:00"),
-                endDate: new Date("2025-12-31T16:00:00")
-            },
-            {
-                dateText: "7 ม.ค. 69",
-                title: "ประกาศรายชื่อผู้สมัคร",
-                desc: "ทั้งแบบแบ่งเขต และแบบบัญชีรายชื่อ",
-                startDate: new Date("2026-01-07T00:00:00"),
-                endDate: new Date("2026-01-07T23:59:59")
-            },
-            {
-                dateText: "18 ม.ค. 69",
-                title: "วันสุดท้ายแจ้งรายชื่อผู้มีสิทธิ์",
-                desc: "นายทะเบียนแจ้งรายชื่อผู้มีสิทธิ์เลือกตั้งไปยังเจ้าบ้าน",
-                startDate: new Date("2026-01-18T00:00:00"),
-                endDate: new Date("2026-01-18T23:59:59")
-            },
-            {
-                dateText: "28 ม.ค. 69",
-                title: "วันสุดท้าย เพิ่มชื่อ-ถอนชื่อ",
-                desc: "ยื่นคำร้องขอเพิ่มชื่อหรือถอนชื่อผู้มีสิทธิ์เลือกตั้ง",
-                startDate: new Date("2026-01-28T00:00:00"),
-                endDate: new Date("2026-01-28T23:59:59")
-            },
-            {
-                dateText: "1 ก.พ. 69",
-                title: "วันเลือกตั้งล่วงหน้า",
-                desc: "(08.00-17.00 น.) ทั้งใน/นอกเขต และผู้พิการ/ผู้สูงอายุ",
-                startDate: new Date("2026-02-01T08:00:00"),
-                endDate: new Date("2026-02-01T17:00:00")
-            },
-            {
-                dateText: "1-7 ก.พ. 69",
-                title: "แจ้งเหตุไม่อาจไปใช้สิทธิ์ (รอบ 1)",
-                desc: "ระยะเวลา 7 วัน ก่อนวันเลือกตั้ง",
-                startDate: new Date("2026-02-01T00:00:00"),
-                endDate: new Date("2026-02-07T23:59:59")
-            },
-            {
-                dateText: "8 ก.พ. 69",
-                title: "⭐ วันเลือกตั้ง ⭐",
-                desc: "(08.00-17.00 น.) โปรดเตรียมบัตรประชาชน",
-                startDate: new Date("2026-02-08T08:00:00"),
-                endDate: new Date("2026-02-08T17:00:00")
-            },
-            {
-                dateText: "9-15 ก.พ. 69",
-                title: "แจ้งเหตุไม่อาจไปใช้สิทธิ์ (รอบ 2)",
-                desc: "ระยะเวลา 7 วัน หลังวันเลือกตั้ง",
-                startDate: new Date("2026-02-09T00:00:00"),
-                endDate: new Date("2026-02-15T23:59:59")
-            }
+            { dateText: "12 ธ.ค. 68", title: "พ.ร.ฎ.ยุบสภาฯ มีผลบังคับใช้", desc: "พระราชกฤษฎีกายุบสภาผู้แทนราษฎร พ.ศ.2568 เริ่มมีผล", startDate: new Date("2025-12-12T00:00:00"), endDate: new Date("2025-12-12T23:59:59") },
+            { dateText: "15 ธ.ค. 68", title: "กกต. ประกาศให้มีการเลือกตั้ง", desc: "", startDate: new Date("2025-12-15T00:00:00"), endDate: new Date("2025-12-15T23:59:59") },
+            { dateText: "20 ธ.ค. 68 - 5 ม.ค. 69", title: "ลงทะเบียนเลือกตั้งล่วงหน้า", desc: "ทั้งในเขต นอกเขต และนอกราชอาณาจักร", startDate: new Date("2025-12-20T00:00:00"), endDate: new Date("2026-01-05T23:59:59") },
+            { dateText: "27-31 ธ.ค. 68", title: "รับสมัคร สส. แบ่งเขต", desc: "เวลา 08.30-16.30 น. ณ สถานที่ที่ผู้อำนวยการเลือกตั้งประจำเขตกำหนด", startDate: new Date("2025-12-27T08:30:00"), endDate: new Date("2025-12-31T16:30:00") },
+            { dateText: "28-31 ธ.ค. 68", title: "รับสมัคร สส. บัญชีรายชื่อ", desc: "ณ ห้องวายุภักษ์ฮอลล์ รร.เซ็นทารา ไลฟ์ ศูนย์ราชการฯ แจ้งวัฒนะ", startDate: new Date("2025-12-28T08:30:00"), endDate: new Date("2025-12-31T16:00:00") },
+            { dateText: "7 ม.ค. 69", title: "ประกาศรายชื่อผู้สมัคร", desc: "ทั้งแบบแบ่งเขต และแบบบัญชีรายชื่อ", startDate: new Date("2026-01-07T00:00:00"), endDate: new Date("2026-01-07T23:59:59") },
+            { dateText: "18 ม.ค. 69", title: "แจ้งรายชื่อผู้มีสิทธิ์", desc: "นายทะเบียนแจ้งรายชื่อผู้มีสิทธิ์เลือกตั้งไปยังเจ้าบ้าน", startDate: new Date("2026-01-18T00:00:00"), endDate: new Date("2026-01-18T23:59:59") },
+            { dateText: "28 ม.ค. 69", title: "วันสุดท้าย เพิ่มชื่อ-ถอนชื่อ", desc: "ยื่นคำร้องขอเพิ่มชื่อหรือถอนชื่อผู้มีสิทธิ์เลือกตั้ง", startDate: new Date("2026-01-28T00:00:00"), endDate: new Date("2026-01-28T23:59:59") },
+            { dateText: "1 ก.พ. 69", title: "วันเลือกตั้งล่วงหน้า", desc: "(08.00-17.00 น.) ทั้งใน/นอกเขต และผู้พิการ/ผู้สูงอายุ", startDate: new Date("2026-02-01T08:00:00"), endDate: new Date("2026-02-01T17:00:00") },
+            { dateText: "1-7 ก.พ. 69", title: "แจ้งเหตุไม่อาจไปใช้สิทธิ์ (รอบ 1)", desc: "ระยะเวลา 7 วัน ก่อนวันเลือกตั้ง", startDate: new Date("2026-02-01T00:00:00"), endDate: new Date("2026-02-07T23:59:59") },
+            { dateText: "8 ก.พ. 69", title: "⭐ วันเลือกตั้ง ⭐", desc: "(08.00-17.00 น.) โปรดเตรียมบัตรประชาชน", startDate: new Date("2026-02-08T08:00:00"), endDate: new Date("2026-02-08T17:00:00") },
+            { dateText: "9-15 ก.พ. 69", title: "แจ้งเหตุไม่อาจไปใช้สิทธิ์ (รอบ 2)", desc: "ระยะเวลา 7 วัน หลังวันเลือกตั้ง", startDate: new Date("2026-02-09T00:00:00"), endDate: new Date("2026-02-15T23:59:59") }
         ];
 
-        // ข้อมูลจุดเลือกตั้ง (ตัวอย่าง)
         const units = [
             { id: 1, name: "ลานจอดรถตลาดยาสูบ", name_details: "บริเวณใกล้สหภาพแรงงาน", unit_count: "3 หน่วย", lat: 13.724167, lng: 100.554444, images: ["https://placehold.co/400x300/orange/white?text=จุดที่1"], details_range: "หน่วยที่ 1-3", location_type: "ภายนอกอาคาร", note: "เต็นท์สีขาวขนาดใหญ่" },
             { id: 2, name: "โรงเรียนวัดคลองเตย", name_details: "อาคารเรียน 1 ชั้นล่าง", unit_count: "1 หน่วย", lat: 13.718500, lng: 100.559200, images: [], details_range: "หน่วยที่ 4", location_type: "ภายในอาคาร", note: "-" },
@@ -305,16 +270,28 @@
 
         let map, markers = [];
 
-        // --- TAB SYSTEM ---
-        function switchTab(tabId, btn) {
-            if(btn) { document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + tabId).classList.add('active');
-            if(tabId === 'map' && map) setTimeout(() => map.invalidateSize(), 100);
+        // --- RESPONSIVE LOGIC ---
+        function checkResponsive() {
+            const isDesktop = window.innerWidth >= 1024;
+            
+            // สลับ Class ที่ Body
+            if (isDesktop) {
+                document.body.classList.remove('mobile-mode');
+                // Desktop: ตั้งค่า Font คงที่ ไม่ต้อง Scale ตามจอ
+                document.documentElement.style.fontSize = '10px';
+                // Desktop: ต้องให้ Map วาดใหม่เมื่อเปลี่ยนขนาดจอ
+                if (map) setTimeout(() => map.invalidateSize(), 100);
+            } else {
+                document.body.classList.add('mobile-mode');
+                // Mobile: เรียกฟังก์ชัน Scale
+                adjustGameScaling();
+            }
         }
 
-        // --- SCALING ---
         function adjustGameScaling() {
+            // ทำงานเฉพาะ Mobile Mode
+            if (window.innerWidth >= 1024) return;
+
             const gameFrame = document.querySelector('.game-frame');
             if (!gameFrame) return;
             const designWidth = 960;
@@ -324,18 +301,24 @@
             if(map) setTimeout(() => map.invalidateSize(), 300);
         }
 
-        // --- TIMELINE ---
+        // --- TAB SYSTEM (Mobile) ---
+        function switchTab(tabId, btn) {
+            if (window.innerWidth >= 1024) return; // Desktop ไม่ต้องกด Tab
+
+            if(btn) { document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + tabId).classList.add('active');
+            if(tabId === 'map' && map) setTimeout(() => map.invalidateSize(), 100);
+        }
+
+        // --- LOGIC: MAP & TIMELINE ---
         function initTimeline() {
             const container = document.getElementById('timeline-container');
-            const now = new Date(); // ใช้วันปัจจุบัน
-            // const now = new Date("2025-12-28T10:00:00"); // ปลดเพื่อทดสอบวันที่
-            
+            const now = new Date();
             let html = '';
             timelineData.forEach(item => {
                 let statusClass = now > item.endDate ? 't-status-done' : (now >= item.startDate ? 't-status-active' : 't-status-future');
                 let icon = now > item.endDate ? '✓' : (now >= item.startDate ? '🔥' : '🔒');
-                
-                // เน้นสีข้อความถ้าเป็น Active
                 let titleStyle = statusClass === 't-status-active' ? 'color:#FF9800;' : '';
 
                 html += `
@@ -352,7 +335,6 @@
             container.innerHTML = html;
         }
 
-        // --- MAP ---
         function initMap() {
             map = L.map('map', { zoomControl: true }).setView([13.720, 100.555], 14);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '©OpenStreetMap', maxZoom: 19 }).addTo(map);
@@ -378,7 +360,6 @@
             renderMarkers(type === 'all' ? units : units.filter(u => u.location_type.includes(type === 'out' ? "ภายนอก" : "ภายใน")));
         }
 
-        // --- POPUP ---
         function openPopup(data) {
             document.getElementById('p-name').innerText = data.name;
             document.getElementById('p-sub').innerText = data.name_details;
@@ -396,8 +377,13 @@
         function closePopupDirect() { document.getElementById('info-overlay').classList.remove('visible'); }
 
         // --- INIT ---
-        window.addEventListener('load', () => { adjustGameScaling(); initTimeline(); initMap(); });
-        window.addEventListener('resize', adjustGameScaling);
+        window.addEventListener('load', () => { 
+            checkResponsive();
+            initTimeline();
+            initMap();
+        });
+        window.addEventListener('resize', checkResponsive);
+
     </script>
 </body>
 </html>
