@@ -44,19 +44,35 @@
             height: 100vh; overflow: auto;
         }
 
-        /* Top Nav */
+        /* --- EDITED: Mobile Top Nav (Tab) --- */
         .top-nav {
-            flex-shrink: 0; height: 6rem; background: #fff; display: flex;
+            flex-shrink: 0; 
+            height: 7rem; /* เพิ่มความสูง */
+            background: #fff; display: flex;
             box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.05); z-index: 100;
         }
         .nav-tab {
-            flex: 1; border: none; background: #f4f6f8;
-            font-size: 1.6rem; font-weight: bold; color: #888;
-            cursor: pointer; position: relative; transition: all 0.2s;
+            flex: 1; border: none; background: #f8f9fa;
+            font-size: 1.8rem; /* เพิ่มขนาดตัวอักษร */
+            font-weight: bold; color: #aaa;
+            cursor: pointer; position: relative; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-            border-bottom: 0.4rem solid transparent;
+            border-bottom: none; /* เอาขีดล่างออกแบบเดิมออก เพื่อใช้สีพื้นหลังแทน */
         }
-        .nav-tab.active { background: #fff; color: #00744b; border-bottom: 0.4rem solid #00744b; }
+        
+        /* Effect ตอนเลือก Tab */
+        .nav-tab.active { 
+            background: #e8f5e9; /* พื้นหลังสีเขียวอ่อน */
+            color: #00744b; 
+            font-size: 2rem; /* ขยายตัวหนังสือเมื่อเลือก */
+            animation: bounceTab 0.5s; /* ใส่ท่าเด้ง */
+        }
+        
+        @keyframes bounceTab {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
 
         /* Content Area */
         .content-area { flex: 1; position: relative; overflow: hidden; display: flex; }
@@ -115,16 +131,26 @@
         #map { width: 100%; height: 100%; z-index: 1; }
         .filter-container {
             position: absolute; top: 2rem; left: 0; width: 100%;
-            display: flex; justify-content: center; gap: 0.5rem;
+            display: flex; justify-content: center; gap: 0.8rem; /* เพิ่มระยะห่าง */
             z-index: 500; padding: 0 1rem; box-sizing: border-box; pointer-events: none;
-            overflow-x: auto; /* Allow scroll on small screens if needed */
+            overflow-x: auto; 
         }
+        
+        /* --- EDITED: Filter Button Size --- */
         .filter-btn {
             pointer-events: auto; background: white; border: 0.2rem solid #ddd;
-            padding: 0.6rem 1.2rem; border-radius: 2rem; font-size: 1.4rem; font-weight: bold; color: #555;
-            box-shadow: 0 0.4rem 0.5rem rgba(0,0,0,0.1); cursor: pointer; white-space: nowrap;
+            padding: 0.8rem 1.8rem; /* เพิ่มขนาดปุ่ม */
+            border-radius: 3rem; 
+            font-size: 1.5rem; /* เพิ่มขนาดตัวอักษร */
+            font-weight: bold; color: #555;
+            box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,0.15); 
+            cursor: pointer; white-space: nowrap; transition: all 0.2s;
         }
-        .filter-btn.active { background: #00744b; border-color: #00744b; color: white; }
+        .filter-btn.active { 
+            background: #00744b; border-color: #00744b; color: white; 
+            transform: scale(1.05); /* ขยายเล็กน้อยเมื่อเลือก */
+        }
+        
         .leaflet-control-zoom a {
             background-color: #FFD700 !important; color: #333 !important;
             border-radius: 1rem !important; width: 4rem !important; height: 4rem !important;
@@ -149,9 +175,39 @@
         .close-btn-circle { position: absolute; top: 2rem; right: 2rem; background: #eee; width: 4rem; height: 4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; }
         .gallery-scroll { display: flex; overflow-x: auto; gap: 1.5rem; padding: 1rem 0; margin-top: 2rem; }
         .gallery-scroll img { height: 15rem; width: auto; border-radius: 1.5rem; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1); }
-        .badge { display: inline-block; padding: 0.5rem 1.5rem; border-radius: 2rem; font-size: 1.8rem; font-weight: bold; margin-right: 1rem; }
+        
+        /* Styles สำหรับ Badge ใน Popup */
+        .badge-container-row {
+            margin-top: 2rem;
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 1rem; 
+            align-items: center;
+        }
+        .badge { 
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.6rem 1.6rem; border-radius: 2rem; 
+            font-size: 1.6rem; font-weight: bold; 
+        }
         .badge-out { background: #FFE5D9; color: #D64545; }
         .badge-in { background: #E3F2FD; color: #1E88E5; }
+        
+        /* --- ADDED: ปุ่มนำทาง --- */
+        .badge-nav {
+            background: #3474a8;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgb(52, 194, 212);
+            transition: transform 0.2s, background 0.2s;
+            cursor: pointer;
+        }
+        .badge-nav:hover {
+            background: #0f3063;
+            transform: translateY(-2px);
+        }
+        .badge-nav:active {
+            transform: translateY(0);
+        }
 
         /* =========================================
            3. DESKTOP / TABLET LANDSCAPE (>1024px)
@@ -327,10 +383,15 @@
                 <div class="close-btn-circle" onclick="closePopupDirect()">✕</div>
                 <h2 id="p-name" style="font-size: 3rem; font-weight: 700; color: #333; line-height: 1.2;">ชื่อสถานที่</h2>
                 <p id="p-sub" style="font-size: 2rem; color: #888; margin-top: 0.5rem;">รายละเอียดสถานที่ย่อย</p>
-                <div style="margin-top: 2rem;">
+                
+                <div class="badge-container-row">
                     <span id="p-type" class="badge badge-out">ประเภท</span>
-                    <span id="p-unit" style="font-size: 1.8rem; color: #555;">จำนวนหน่วย</span>
+                    <span id="p-unit" style="font-size: 1.8rem; color: #555; background:#f5f5f5; padding: 0.6rem 1.6rem; border-radius: 2rem; font-weight:bold;">จำนวนหน่วย</span>
+                    <a id="btn-navigate" href="#" target="_blank" class="badge badge-nav">
+                         📍 นำทาง
+                    </a>
                 </div>
+
                 <div id="p-gallery" class="gallery-scroll"></div>
                 <div style="margin-top: 2rem; padding: 2rem; background: #f9f9f9; border-radius: 2rem; border: 2px dashed #ddd;">
                     <p style="font-size: 1.6rem; font-weight: 700; color: #555;">Note:</p>
@@ -500,7 +561,6 @@
                 let typeColor = unit.location_type.includes("ภายนอก") ? "red" : "blue";
                 
                 // Extract unit number text from details_range
-                // Example: "แขวงคลองเตย หน่วยที่ 1-6" -> "1-6"
                 let unitLabel = "-";
                 if(unit.details_range.includes("หน่วยที่")) {
                     unitLabel = unit.details_range.split("หน่วยที่")[1].trim();
@@ -521,7 +581,6 @@
             if(type === 'all') {
                 renderMarkers(units);
             } else {
-                // Filter by substring check on details_range (e.g., check if it contains "แขวงคลองเตย")
                 renderMarkers(units.filter(u => u.details_range.includes(type)));
             }
         }
@@ -536,6 +595,17 @@
             typeBadge.innerText = data.location_type.includes("ภายนอก") ? "ภายนอกอาคาร" : "ภายในอาคาร";
             const gallery = document.getElementById('p-gallery');
             gallery.innerHTML = data.images.length ? data.images.map(img => `<img src="${img}" onclick="window.open('${img}')">`).join('') : `<div style="width:100%; height:10rem; background:#eee; border-radius:1.5rem; display:flex; justify-content:center; align-items:center; color:#999; font-size:1.6rem;">ไม่มีรูปภาพ</div>`;
+            
+            // --- UPDATE: นำทาง Link ---
+            const navBtn = document.getElementById('btn-navigate');
+            if(data.lat && data.lng) {
+                 // Google Maps Direction Link
+                 navBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${data.lat},${data.lng}`;
+                 navBtn.style.display = 'inline-flex';
+            } else {
+                 navBtn.style.display = 'none';
+            }
+
             document.getElementById('info-overlay').classList.add('visible');
         }
 
