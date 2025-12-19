@@ -13,16 +13,15 @@
         /* =========================================
            1. SHARED STYLES (Base)
            ========================================= */
-        /* กำหนด Base Font Size ให้เป็น 62.5% (1rem = 10px) เพื่อให้คำนวณง่ายและ Responsive */
         html { font-size: 62.5%; height: 100%; } 
         
         body {
             font-family: 'Sarabun', sans-serif; 
-            background-color: #f0f4f8; /* เปลี่ยนจากสีดำเป็นสีพื้นหลังปกติ */
+            background-color: #f0f4f8;
             margin: 0;
             height: 100%;
             width: 100%;
-            overflow: hidden; /* ซ่อน Scroll ของ Body หลัก เพื่อไป Scroll ในจุดที่กำหนด */
+            overflow: hidden;
         }
 
         h1, h2, h3, .nav-tab, .badge, .filter-btn, .bma-font, .desktop-toggle-btn { 
@@ -30,72 +29,107 @@
         }
 
         /* =========================================
-           2. LAYOUT STRUCTURE (Flexible)
+           2. LIGHTBOX (NEW FEATURES)
+           ========================================= */
+        /* พื้นหลัง Lightbox */
+        .lightbox-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); /* สีดำโปร่งแสง */
+            backdrop-filter: blur(5px); /* เบลอฉากหลัง */
+            z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .lightbox-overlay.active { opacity: 1; visibility: visible; }
+
+        /* ตัวรูปภาพ */
+        .lightbox-img {
+            max-width: 90vw; /* กว้างไม่เกิน 90% ของจอ */
+            max-height: 90vh; /* สูงไม่เกิน 90% ของจอ */
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* เด้งดึ๋งเล็กน้อย */
+            object-fit: contain;
+        }
+        .lightbox-overlay.active .lightbox-img {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* ปุ่มปิดสวยๆ */
+        .lightbox-close-btn {
+            position: absolute; top: 2rem; right: 2rem;
+            width: 4.5rem; height: 4.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            z-index: 2001;
+        }
+        .lightbox-close-btn::before, .lightbox-close-btn::after {
+            content: ''; position: absolute;
+            width: 2rem; height: 2px; background: white;
+            border-radius: 2px;
+        }
+        .lightbox-close-btn::before { transform: rotate(45deg); }
+        .lightbox-close-btn::after { transform: rotate(-45deg); }
+        
+        .lightbox-close-btn:hover {
+            background: rgba(255, 68, 68, 0.8);
+            border-color: rgba(255, 68, 68, 0);
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+        }
+
+
+        /* =========================================
+           3. LAYOUT STRUCTURE
            ========================================= */
         .game-frame {
             position: relative; 
             background-color: #f0f4f8;
-            width: 100%; 
-            height: 100%; /* เต็มจอเสมอ */
-            margin: 0; 
-            display: flex; 
-            flex-direction: column;
+            width: 100%; height: 100%; margin: 0; 
+            display: flex; flex-direction: column;
             overflow: hidden;
         }
 
-        /* --- Mobile Top Nav (Tab) --- */
         .top-nav {
-            flex-shrink: 0; 
-            height: 6rem; /* ความสูงเมนู */
+            flex-shrink: 0; height: 6rem;
             background: #fff; display: flex;
             box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.05); z-index: 100;
         }
         .nav-tab {
             flex: 1; border: none; background: #f8f9fa;
-            font-size: 1.6rem; 
-            font-weight: bold; color: #aaa;
-            cursor: pointer; position: relative; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.6rem; font-weight: bold; color: #aaa;
+            cursor: pointer; position: relative; transition: all 0.3s;
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             border-bottom: 1px solid #eee;
         }
-        
         .nav-tab.active { 
-            background: #e8f5e9; 
-            color: #00744b; 
-            font-size: 1.8rem; 
+            background: #e8f5e9; color: #00744b; font-size: 1.8rem; 
             border-bottom: 3px solid #00744b;
         }
 
-        /* Content Area Container */
         .content-area { 
-            flex: 1; /* กินพื้นที่ที่เหลือทั้งหมด */
-            position: relative; 
-            overflow: hidden; 
-            display: flex; 
-            width: 100%;
+            flex: 1; position: relative; overflow: hidden; display: flex; width: 100%;
         }
 
         .tab-view { 
-            width: 100%; 
-            height: 100%; 
-            display: none; 
-            flex-direction: column; 
+            width: 100%; height: 100%; display: none; flex-direction: column; 
         }
         .tab-view.active { display: flex; }
 
-        /* Timeline & Guide Scrollable Areas */
-        /* สำคัญ: ตรงนี้ทำให้ Timeline และ Guide มี Scrollbar ของตัวเองและไม่ย่อข้อมูล */
         #view-timeline, #view-guide { 
-            overflow-y: auto; 
-            padding: 2rem; 
-            background: #fff; 
-            height: 100%;
-            -webkit-overflow-scrolling: touch; /* ลื่นไหลบน iOS */
+            overflow-y: auto; padding: 2rem; background: #fff; height: 100%;
+            -webkit-overflow-scrolling: touch;
         }
 
         .panel-header { text-align: center; margin-bottom: 2rem; margin-top: 1rem; position: relative; }
-        
-        /* Desktop Switcher (Hidden on Mobile) */
         .desktop-switcher { display: none; }
 
         /* Timeline Items */
@@ -121,7 +155,7 @@
         .t-status-active .t-content h3 { color: #FF9800; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); } 70% { box-shadow: 0 0 0 1rem rgba(255, 152, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); } }
 
-        /* Guide / FAQ Styles */
+        /* FAQ */
         .faq-container { display: flex; flex-direction: column; gap: 1.5rem; padding-bottom: 4rem; }
         details {
             border: 1px solid #eee; border-radius: 1.5rem; overflow: hidden;
@@ -139,52 +173,31 @@
         details[open] summary { background: #e8f5e9; color: #00744b; border-bottom: 1px solid #eee; }
         .faq-answer { padding: 1.5rem; font-size: 1.5rem; color: #555; line-height: 1.6; background: #fff; }
 
-        /* Map Specific */
+        /* Map */
         #map { width: 100%; height: 100%; z-index: 1; }
         .filter-container {
-            /* กำหนดตำแหน่ง */
-            position: absolute; 
-            top: 2rem;           /* เว้นจากขอบบน */
-            left: 1.5rem;        /* เว้นจากขอบซ้าย */
-            width: auto;         /* ให้กว้างเท่าที่จำเป็น (ไม่เต็มจอ) */
-            height: auto;        /* ให้สูงตามจำนวนปุ่ม */
-            max-height: 80%;     /* ถ้าปุ่มเยอะเกิน ให้สูงไม่เกิน 80% ของจอ */
-            z-index: 500; 
-            pointer-events: none; /* เพื่อให้กดทะลุพื้นที่ว่างไปโดนแผนที่ได้ */
-
-            /* --- ส่วนสำคัญที่ทำให้เป็นแนวตั้ง --- */
-            display: flex; 
-            flex-direction: column; /* เรียงจากบนลงล่าง */
-            align-items: flex-start; /* จัดปุ่มชิดซ้าย */
-            gap: 1rem;              /* ระยะห่างระหว่างปุ่ม */
-
+            position: absolute; top: 2rem; left: 1.5rem; width: auto; height: auto; max-height: 80%;
+            z-index: 500; pointer-events: none; 
+            display: flex; flex-direction: column; align-items: flex-start; gap: 1rem;
         }
-        
         .filter-btn {
             pointer-events: auto; background: white; border: 1px solid #ddd;
-            padding: 0.4rem 1.2rem; 
-            border-radius: 2rem; 
-            font-size: 1.6rem; 
-            font-weight: bold; color: #555;
+            padding: 0.4rem 1.2rem; border-radius: 2rem; 
+            font-size: 1.6rem; font-weight: bold; color: #555;
             box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.1); 
             cursor: pointer; white-space: nowrap; transition: all 0.2s;
         }
         .filter-btn.active { 
-            background: #00744b; border-color: #00744b; color: white; 
-            transform: scale(1.05);
+            background: #00744b; border-color: #00744b; color: white; transform: scale(1.05);
         }
-        
         .leaflet-control-zoom a {
             background-color: #e7050594 !important; color: #333 !important;
             border-radius: 0.5rem !important; width: 3.5rem !important; height: 3.5rem !important;
             line-height: 3.5rem !important; font-size: 2rem !important;
         }
+        .leaflet-right .leaflet-control { margin-right: 3.8rem; }
 
-        .leaflet-right .leaflet-control {
-            margin-right: 3.8rem; /* ปรับระยะห่างจากขอบจอ */
-        }
-
-        /* Popup */
+        /* Popup Info Card */
         .info-popup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
@@ -193,92 +206,66 @@
         }
         .info-popup-overlay.visible { opacity: 1; visibility: visible; }
         .info-card {
-            background: white; width: 100%; 
-            max-height: 85vh; /* ไม่ให้สูงเกินหน้าจอ */
+            background: white; width: 100%; max-height: 85vh;
             border-radius: 2rem 2rem 0 0; padding: 2.5rem;
             transform: translateY(100%); transition: transform 0.3s ease-out;
-            display: flex; flex-direction: column; position: relative;
-            overflow-y: auto; /* Scroll ใน popup ได้ */
+            display: flex; flex-direction: column; position: relative; overflow-y: auto;
         }
         .info-popup-overlay.visible .info-card { transform: translateY(0); }
         .close-btn-circle { position: absolute; top: 1.5rem; right: 1.5rem; background: #eee; width: 3.5rem; height: 3.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; z-index: 10; }
+        
+        /* Gallery Thumbnails */
         .gallery-scroll { display: flex; overflow-x: auto; gap: 1rem; padding: 1rem 0; margin-top: 1.5rem; flex-shrink: 0;}
-        .gallery-scroll img { height: 12rem; width: auto; border-radius: 1rem; box-shadow: 0 0.3rem 0.6rem rgba(0,0,0,0.1); }
+        .gallery-scroll img { 
+            height: 12rem; width: auto; border-radius: 1rem; 
+            box-shadow: 0 0.3rem 0.6rem rgba(0,0,0,0.1); 
+            cursor: zoom-in; /* เปลี่ยนเคอร์เซอร์เป็นแว่นขยาย */
+            transition: transform 0.2s;
+        }
+        .gallery-scroll img:active { transform: scale(0.95); }
         
         .badge-container-row {
-            margin-top: 1.5rem;
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 0.8rem; 
-            align-items: center;
+            margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center;
         }
         .badge { 
             display: inline-flex; align-items: center; justify-content: center;
-            padding: 0.5rem 1.2rem; border-radius: 1.5rem; 
-            font-size: 1.4rem; font-weight: bold; 
+            padding: 0.5rem 1.2rem; border-radius: 1.5rem; font-size: 1.4rem; font-weight: bold; 
         }
         .badge-out { background: #FFE5D9; color: #D64545; }
         .badge-in { background: #E3F2FD; color: #1E88E5; }
         
         .badge-nav {
-            background: #3474a8;
-            color: white;
-            text-decoration: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.2s, background 0.2s;
+            background: #3474a8; color: white; text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s, background 0.2s;
             cursor: pointer;
         }
         .badge-nav:hover { background: #0f3063; transform: translateY(-2px); }
 
-        /* =========================================
-           3. DESKTOP / TABLET LANDSCAPE (>1024px)
-           ========================================= */
+        /* Desktop */
         @media (min-width: 1024px) {
-            .game-frame {
-                flex-direction: row; /* จัดเรียงแนวนอน */
-                box-shadow: none;
-                border-radius: 0;
-            }
-            .top-nav { display: none; } /* ซ่อน Tab มือถือ */
-            
-            /* Left Panel (Timeline OR Guide) */
+            .game-frame { flex-direction: row; box-shadow: none; border-radius: 0; }
+            .top-nav { display: none; }
             .left-panel-content {
                 width: 35%; min-width: 380px; max-width: 450px;
                 border-right: 1px solid #ddd; height: 100%; z-index: 2;
-                box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-                display: none; 
+                box-shadow: 2px 0 10px rgba(0,0,0,0.05); display: none; 
             }
             .left-panel-content.desktop-active { display: block !important; }
-
             .mobile-only-btn { display: none; }
-            
-            /* Map always visible on right */
-            #view-map {
-                display: block !important; flex: 1; height: 100%; position: relative;
-            }
-
-            /* Desktop Switcher in Header */
-            .desktop-switcher {
-                display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;
-            }
+            #view-map { display: block !important; flex: 1; height: 100%; position: relative; }
+            .desktop-switcher { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
             .desktop-toggle-btn {
                 padding: 0.5rem 1.5rem; border: 1px solid #ddd; border-radius: 2rem;
                 background: white; color: #888; cursor: pointer; font-size: 1.4rem; transition: all 0.2s;
             }
-            .desktop-toggle-btn.active {
-                background: #00744b; color: white; border-color: #00744b;
-            }
-
+            .desktop-toggle-btn.active { background: #00744b; color: white; border-color: #00744b; }
             .info-card {
-                width: 500px; height: auto; max-height: 80vh;
-                border-radius: 2rem;
-                transform: translateY(20px); opacity: 0;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                width: 500px; height: auto; max-height: 80vh; border-radius: 2rem;
+                transform: translateY(20px); opacity: 0; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
             }
             .info-popup-overlay { align-items: center; }
             .info-popup-overlay.visible .info-card { transform: translateY(0); opacity: 1; }
         }
-
     </style>
 </head>
 <body class="mobile-mode"> 
@@ -294,12 +281,10 @@
         <div class="content-area">
             
             <div id="view-timeline" class="tab-view left-panel-content active">
-                
                 <div class="desktop-switcher">
                     <button class="desktop-toggle-btn active" onclick="switchDesktopPanel('timeline')">ปฏิทิน</button>
                     <button class="desktop-toggle-btn" onclick="switchDesktopPanel('guide')">คู่มือประชาชน</button>
                 </div>
-
                 <div class="panel-header" style="margin-bottom: 2rem;">
                     <h1 style="font-size: 2.8rem; margin:0; color:#414141; line-height: 1.1;">
                         กรุงเทพมหานคร<br>
@@ -309,9 +294,7 @@
                         เขตคลองเตยและเขตวัฒนา
                     </h2>
                 </div>
-
                 <div id="timeline-container"></div>
-                
                 <button class="mobile-only-btn" onclick="switchTab('map', document.querySelectorAll('.nav-tab')[1])" 
                     style="width: 100%; font-size: 1.8rem; padding: 1.2rem; margin-top: 2rem; margin-bottom: 2rem;
                         background: #eee; color: #555; border: none; border-radius: 2rem; font-weight: bold; cursor: pointer; font-family: 'Prompt';">
@@ -320,60 +303,22 @@
             </div>
 
             <div id="view-guide" class="tab-view left-panel-content">
-                
                 <div class="desktop-switcher">
                     <button class="desktop-toggle-btn" onclick="switchDesktopPanel('timeline')">ปฏิทิน</button>
                     <button class="desktop-toggle-btn active" onclick="switchDesktopPanel('guide')">คู่มือประชาชน</button>
                 </div>
-
                 <div class="panel-header">
                     <h1 style="font-size: 2.6rem; color:#333;">คู่มือเลือกตั้ง 🗳️</h1>
                     <p style="font-size: 1.5rem; color:#888;">คำถามที่พบบ่อย (FAQ)</p>
                 </div>
-
                 <div class="faq-container">
-                    <details open>
-                        <summary>1. ต้องเตรียมเอกสารอะไรบ้าง?</summary>
-                        <div class="faq-answer">
-                            หลักฐานสำคัญที่สุดคือ <b>"บัตรประชาชน"</b> (หมดอายุก็ใช้ได้) หรือหลักฐานอื่นของทางราชการที่มีรูปถ่ายและเลขประจำตัวประชาชน เช่น ใบขับขี่, พาสปอร์ต, หรือแอปพลิเคชัน ThaID
-                        </div>
-                    </details>
-                    <details>
-                        <summary>2. ตรวจสอบสิทธิเลือกตั้งที่ไหน?</summary>
-                        <div class="faq-answer">
-                            สามารถตรวจสอบรายชื่อผู้มีสิทธิเลือกตั้งได้จากหนังสือแจ้งเจ้าบ้าน หรือผ่านเว็บไซต์ของกรมการปกครอง (Bora Portal) และแอปพลิเคชัน Smart Vote
-                        </div>
-                    </details>
-                    <details>
-                        <summary>3. ถ้าไม่ว่างวันจริงทำอย่างไร?</summary>
-                        <div class="faq-answer">
-                            ท่านสามารถลงทะเบียน <b>"เลือกตั้งล่วงหน้า"</b> ได้ในช่วงวันที่ 20 ธ.ค. 68 - 5 ม.ค. 69 โดยสามารถยื่นคำขอต่อนายทะเบียนสำนักงานเขต หรือผ่านทางออนไลน์
-                        </div>
-                    </details>
-                    <details>
-                        <summary>4. คูหาเปิดกี่โมง?</summary>
-                        <div class="faq-answer">
-                            คูหาเลือกตั้งเปิดให้ลงคะแนนตั้งแต่เวลา <b>08.00 น. ถึง 17.00 น.</b> โปรดวางแผนการเดินทางเพื่อไปใช้สิทธิได้ทันเวลา
-                        </div>
-                    </details>
-                    <details>
-                        <summary>5. กากบาทอย่างไรไม่ให้เป็นบัตรเสีย?</summary>
-                        <div class="faq-answer">
-                            ทำเครื่องหมาย <b>"กากบาท (X)"</b> ลงในช่องทำเครื่องหมายเพียงเครื่องหมายเดียว ห้ามขีดเขียนข้อความอื่นหรือทำเครื่องหมายสัญลักษณ์อื่นใด
-                        </div>
-                    </details>
-                    <details>
-                        <summary>6. ข้อห้ามที่สำคัญในวันเลือกตั้ง</summary>
-                        <div class="faq-answer">
-                            ❌ ห้ามถ่ายรูปภายในคูหา หรือบัตรเลือกตั้ง<br>
-                            ❌ ห้ามใส่เครื่องแต่งกายที่มีโลโก้พรรค หรือผู้สมัคร<br>
-                            ❌ ห้ามแสดงบัตรเลือกตั้งให้ผู้อื่นเห็น<br>
-                            ❌ ห้ามโฆษณา หาเสียง ให้ผู้สมัคร หรือพรรคการเมือง<br>
-                            ❌ ห้ามกระทำการใด อันเป็นเหตุในการขัดขวางการปฏิบัติหน้าที่ของเจ้าพนักงาน หรือกระทบต่อการใช้สิทธิของผู้อื่น<br>
-                        </div>
-                    </details>
+                    <details open><summary>1. ต้องเตรียมเอกสารอะไรบ้าง?</summary><div class="faq-answer">หลักฐานสำคัญที่สุดคือ <b>"บัตรประชาชน"</b> (หมดอายุก็ใช้ได้) หรือหลักฐานอื่นของทางราชการที่มีรูปถ่ายและเลขประจำตัวประชาชน เช่น ใบขับขี่, พาสปอร์ต, หรือแอปพลิเคชัน ThaID</div></details>
+                    <details><summary>2. ตรวจสอบสิทธิเลือกตั้งที่ไหน?</summary><div class="faq-answer">สามารถตรวจสอบรายชื่อผู้มีสิทธิเลือกตั้งได้จากหนังสือแจ้งเจ้าบ้าน หรือผ่านเว็บไซต์ของกรมการปกครอง (Bora Portal) และแอปพลิเคชัน Smart Vote</div></details>
+                    <details><summary>3. ถ้าไม่ว่างวันจริงทำอย่างไร?</summary><div class="faq-answer">ท่านสามารถลงทะเบียน <b>"เลือกตั้งล่วงหน้า"</b> ได้ในช่วงวันที่ 20 ธ.ค. 68 - 5 ม.ค. 69 โดยสามารถยื่นคำขอต่อนายทะเบียนสำนักงานเขต หรือผ่านทางออนไลน์</div></details>
+                    <details><summary>4. คูหาเปิดกี่โมง?</summary><div class="faq-answer">คูหาเลือกตั้งเปิดให้ลงคะแนนตั้งแต่เวลา <b>08.00 น. ถึง 17.00 น.</b> โปรดวางแผนการเดินทางเพื่อไปใช้สิทธิได้ทันเวลา</div></details>
+                    <details><summary>5. กากบาทอย่างไรไม่ให้เป็นบัตรเสีย?</summary><div class="faq-answer">ทำเครื่องหมาย <b>"กากบาท (X)"</b> ลงในช่องทำเครื่องหมายเพียงเครื่องหมายเดียว ห้ามขีดเขียนข้อความอื่นหรือทำเครื่องหมายสัญลักษณ์อื่นใด</div></details>
+                    <details><summary>6. ข้อห้ามที่สำคัญในวันเลือกตั้ง</summary><div class="faq-answer">❌ ห้ามถ่ายรูปภายในคูหา หรือบัตรเลือกตั้ง<br>❌ ห้ามใส่เครื่องแต่งกายที่มีโลโก้พรรค หรือผู้สมัคร<br>❌ ห้ามแสดงบัตรเลือกตั้งให้ผู้อื่นเห็น<br>❌ ห้ามโฆษณา หาเสียง ให้ผู้สมัคร หรือพรรคการเมือง<br>❌ ห้ามกระทำการใด อันเป็นเหตุในการขัดขวางการปฏิบัติหน้าที่ของเจ้าพนักงาน หรือกระทบต่อการใช้สิทธิของผู้อื่น</div></details>
                 </div>
-
                 <button class="mobile-only-btn" onclick="switchTab('map', document.querySelectorAll('.nav-tab')[1])" 
                     style="width: 100%; font-size: 1.8rem; padding: 1.2rem; margin-top: 3rem; margin-bottom: 2rem;
                         background: #eee; color: #555; border: none; border-radius: 2rem; font-weight: bold; cursor: pointer; font-family: 'Prompt';">
@@ -402,9 +347,7 @@
                 <div class="badge-container-row">
                     <span id="p-type" class="badge badge-out">ประเภท</span>
                     <span id="p-unit" style="font-size: 1.6rem; color: #555; background:#f5f5f5; padding: 0.5rem 1.2rem; border-radius: 2rem; font-weight:bold;">จำนวนหน่วย</span>
-                    <a id="btn-navigate" href="#" target="_blank" class="badge badge-nav">
-                         📍 นำทาง
-                    </a>
+                    <a id="btn-navigate" href="#" target="_blank" class="badge badge-nav">📍 นำทาง</a>
                 </div>
 
                 <div id="p-gallery" class="gallery-scroll"></div>
@@ -414,6 +357,11 @@
                 </div>
                 <div style="height: 2rem;"></div>
             </div>
+        </div>
+
+        <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
+            <div class="lightbox-close-btn" onclick="closeLightbox()"></div>
+            <img id="lightbox-img" class="lightbox-img" src="" alt="Full view" onclick="event.stopPropagation()">
         </div>
 
     </div>
@@ -436,19 +384,19 @@
         ];
 
         const units = [
-            // --- แขวงคลองเตย ---
+            // ข้อมูลเดิม
             { id: 1, name: "เต็นท์บริเวณลานจอดรถ ตลาดยาสูบ", unit_count: "6 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 1-6", location_type: "ภายนอกอาคาร", note: "บริเวณใกล้สหภาพแรงงานรัฐวิสหกิจยาสูบ 3 หน่วย \n บริเวณลานใกล้โรงงานยาสูบ 3 หน่วย", lat:13.724265, lng:100.554604, images: ["images/id01p01.jpg","images/id01p02.jpg","images/id01p03.jpg"] },
-            { id: 2, name: "เต็นท์บริเวณสวนเบญจกิติ", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 7", location_type: "ภายนอกอาคาร", note: "สวนเบญจกิติ ท้ายซอยสุขุมวิท4 บริเวณลานต้นไม้ 1 หน่วย", lat:13.733863, lng:100.553219, images: ["images/id02p01.jpg","images/id02p02.jpg"] },
-            { id: 3, name: "เต็นท์บริเวณด้านหน้าสมาคมอนุเคราะห์คลองเตย", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 8", location_type: "ภายนอกอาคาร", note: "-", lat:13.72007, lng:100.5635792, images: [] },
-            { id: 4, name: "บริเวณที่จอดรถใต้อาคารพระราม 4 เรสซิเด้นท์", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 9", location_type: "ภายในอาคาร", note: "-", lat:13.720102, lng:100.563340, images: [] },
-            { id: 5, name: "เต็นท์บริเวณอาคารไอสโตร์ ซอยสุขุมวิท 24", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 10-12", location_type: "ภายนอกอาคาร", note: "-", lat:13.723779841721806, lng:100.56766352066282, images: [] },
-            { id: 6, name: "ten away new ปากซอยสุขุมวิท 10", unit_count: "2 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 13-14", location_type: "ภายนอกอาคาร", note: "-", lat:13.739022, lng:100.557101, images: [] },
-            { id: 7, name: "โรงจอดรถอาคารชุดซิตี้เลคทาวเวอร์ ซอยสุขุมวิท 16", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 15", location_type: "ภายในอาคาร", note: "-", lat:13.733641748082459, lng:100.56115163217392, images: [] },
-            { id: 8, name: "เต็นท์บริเวณลานกิจกรรมโรงเรียนสายน้ำผึ้ง", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 16-18", location_type: "ภายนอกอาคาร", note: "-", lat:13.727436635066569, lng:100.56474239314353, images: [] },
-            { id: 9, name: "เต็นท์บริเวณที่จอดรถหน้าศูนย์อาหาร 130 ปี กรมศุลกากร", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 19-21", location_type: "ภายนอกอาคาร", note: "-", lat:13.712634552474507, lng:100.56516374972053, images: [] },
-            { id: 10, name: "ที่จอดรถข้างอาคาร 2 ศูนย์บริการสาธารณสุข 41 คลองเตย", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 22", location_type: "ภายนอกอาคาร", note: "-", lat:13.714698427270795, lng:100.56966295374613, images: [] },
-            { id: 11, name: "อาคารที่พักผู้ปกครองหน้าโรงเรียนพระหฤทัยคอนแวนต์", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 23-25", location_type: "ภายในอาคาร", note: "-", lat:13.717876394898, lng:100.55766122094187, images: [] },
-            { id: 12, name: "เต็นท์บริเวณสวนสมเด็จย่า ถนนพระราม 3", unit_count: "2 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 26, 29", location_type: "ภายนอกอาคาร", note: "-", lat:13.715595196239383, lng:100.55533715458098, images: [] },
+            { id: 2, name: "เต็นท์บริเวณสวนเบญจกิติ", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 7", location_type: "ภายนอกอาคาร", note: "สวนเบญจกิติ ท้ายซอยสุขุมวิท4 บริเวณลานต้นไม้", lat:13.733863, lng:100.553219, images: ["images/id02p01.jpg","images/id02p02.jpg"] },
+            { id: 3, name: "เต็นท์บริเวณด้านหน้าสมาคมอนุเคราะห์คลองเตย", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 8", location_type: "ภายนอกอาคาร", note: "บริเวณด้านหน้าสมาคม", lat:13.72007, lng:100.5635792, images: ["images/id03p01.jpg","images/id03p02.jpg"] },
+            { id: 4, name: "บริเวณที่จอดรถใต้อาคารพระราม 4 เรสซิเด้นท์", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 9", location_type: "ภายในอาคาร", note: "บริเวณใต้อาคาร", lat:13.720102, lng:100.563340, images: ["images/id04p01.jpg","images/id04p02.jpg"] },
+            { id: 5, name: "เต็นท์บริเวณอาคารไอสโตร์ ซอยสุขุมวิท 24", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 10-12", location_type: "ภายนอกอาคาร", note: "บริเวณลานจอดรถ", lat:13.723779841721806, lng:100.56766352066282, images: ["images/id05p01.jpg","images/id05p02.jpg"] },
+            { id: 6, name: "ten away new ปากซอยสุขุมวิท 10", unit_count: "2 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 13-14", location_type: "ภายนอกอาคาร", note: "บริเวณลานใกล้ต้นไม้", lat:13.739022, lng:100.557101, images: ["images/id06p01.jpg","images/id06p02.jpg"] },
+            { id: 7, name: "โรงจอดรถอาคารชุดซิตี้เลคทาวเวอร์ ซอยสุขุมวิท 16", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 15", location_type: "ภายในอาคาร", note: "ใต้อาคาร บริเวณที่จอดรถ", lat:13.733641748082459, lng:100.56115163217392, images: ["images/id07p01.jpg","images/id07p02.jpg"] },
+            { id: 8, name: "เต็นท์บริเวณลานกิจกรรมโรงเรียนสายน้ำผึ้ง", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 16-18", location_type: "ภายนอกอาคาร", note: "ลานกิจกรรม ใต้โดม", lat:13.727436635066569, lng:100.56474239314353, images: ["images/id08p01.jpg","images/id08p02.jpg"] },
+            { id: 9, name: "เต็นท์บริเวณที่จอดรถหน้าศูนย์อาหาร 130 ปี กรมศุลกากร", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 19-21", location_type: "ภายนอกอาคาร", note: "ที่จอดรถหน้าศูนย์อาหาร", lat:13.712634552474507, lng:100.56516374972053, images: ["images/id09p01.jpg","images/id09p02.jpg"] },
+            { id: 10, name: "ที่จอดรถข้างอาคาร 2 ศูนย์บริการสาธารณสุข 41 คลองเตย", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 22", location_type: "ภายนอกอาคาร", note: "บริเวณที่จอดรถข้างอาคาร 2", lat:13.714698427270795, lng:100.56966295374613, images: ["images/id10p01.jpg","images/id10p02.jpg"] },
+            { id: 11, name: "อาคารที่พักผู้ปกครองหน้าโรงเรียนพระหฤทัยคอนแวนต์", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 23-25", location_type: "ภายในอาคาร", note: "อาคารที่พักผู้ปกครองอยู่บริเวณในโรงเรียนด้านหน้า", lat:13.717876394898, lng:100.55766122094187, images: ["images/id11p01.jpg","images/id11p02.jpg"] },
+            { id: 12, name: "เต็นท์บริเวณสวนสมเด็จย่า ถนนพระราม 3", unit_count: "2 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 26, 29", location_type: "ภายนอกอาคาร", note: "ในสวนมีทางเดินลานไม้กระถาง", lat:13.715595196239383, lng:100.55533715458098, images: ["images/id12p01.jpg","images/id12p02.jpg","images/id12p03.jpg"] },
             { id: 13, name: "อาคารสโมสรการท่าเรือ", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 27", location_type: "ภายในอาคาร", note: "-", lat:13.716182020558652, lng:100.55973089820786, images: [] },
             { id: 14, name: "โรงเรียนไทยประสิทธิ์ศาสตร์ วัดคลองเตยนอก", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 28", location_type: "ภายในอาคาร", note: "-", lat:13.7079369, lng:100.5635146, images: [] },
             { id: 15, name: "โรงเรียนสามัคคีสงเคราะห์", unit_count: "5 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 30-34", location_type: "ภายในอาคาร", note: "-", lat:13.70679960638564, lng:100.58265731482834, images: [] },
@@ -466,15 +414,11 @@
             { id: 27, name: "เต็นท์บริเวณลานกีฬา กทม. ชุมชนหมู่บ้านพัฒนา 70 ไร่", unit_count: "4 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 59-62", location_type: "ภายนอกอาคาร", note: "-", lat:13.708853545674376, lng:100.57507714299472, images: [] },
             { id: 28, name: "เต็นท์ลานกีฬา กทม. ชุมชนริมทางรถไฟสายท่าเรือ", unit_count: "2 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 63, 64", location_type: "ภายนอกอาคาร", note: "-", lat: 0, lng: 0, images: [] },
             { id: 29, name: "โรงเรียนวัดคลองเตย", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 65-67", location_type: "ภายในอาคาร", note: "-", lat:13.710127615678996, lng:100.5610080164237, images: [] },
-
-            // --- แขวงคลองตัน ---
             { id: 30, name: "โรงเรียนสายน้ำทิพย์", unit_count: "1 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 1", location_type: "ภายในอาคาร", note: "-", lat:13.727872085045814, lng:100.5651743617523, images: [] },
             { id: 31, name: "เต็นท์บริเวณอุทยานเบญจสิริ", unit_count: "3 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 2-4", location_type: "ภายนอกอาคาร", note: "-", lat:13.731233489502825, lng:100.56778359592492, images: [] },
             { id: 32, name: "เต็นท์บริเวณลานกิจกรรมหน้าห้างโลตัส พระราม 4", unit_count: "2 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 5-6", location_type: "ภายนอกอาคาร", note: "-", lat:13.718083720462747, lng:100.56867271431877, images: [] },
             { id: 33, name: "โรงเรียนสิงฟ้า", unit_count: "2 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 7-8", location_type: "ภายในอาคาร", note: "-", lat:13.722454849579316, lng:100.57010800374248, images: [] },
             { id: 34, name: "อาคารจอดรถโรงเรียนนานาชาติทรีนิตี้ สุขุมวิท 36", unit_count: "3 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 9-11", location_type: "ภายในอาคาร", note: "-", lat:13.722629815350764, lng:100.57489999591625, images: [] },
-
-            // --- แขวงพระโขนง ---
             { id: 35, name: "เต็นท์บริเวณลานกิจกรรมโรงเรียนปทุมคงคา", unit_count: "5 หน่วย", details_range: "แขวงพระโขนง หน่วยที่ 1-5", location_type: "ภายนอกอาคาร", note: "-", lat:13.718820965526636, lng:100.58163008606853, images: [] },
             { id: 36, name: "เต็นท์บริเวณสมาคมสกุลคู (ศาลเจ้า)", unit_count: "2 หน่วย", details_range: "แขวงพระโขนง หน่วยที่ 6-7", location_type: "ภายนอกอาคาร", note: "-", lat:13.71322394321192, lng:100.58612446670615, images: [] },
             { id: 37, name: "เต็นท์บริเวณลานจอดรถอาจณรงค์มาร์เก็ต(หลัง 7-11)", unit_count: "2 หน่วย", details_range: "แขวงพระโขนง หน่วยที่ 8-9", location_type: "ภายนอกอาคาร", note: "-", lat:13.709920979583616, lng:100.58320646583579, images: [] },
@@ -489,24 +433,18 @@
         let map, markers = [];
 
         function checkResponsive() {
-            // ฟังก์ชันนี้จะจัดการแค่การสลับ Layout Desktop/Mobile 
-            // ไม่มีการคำนวณย่อขยายหน้าจอ (Scaling) อีกต่อไป
             const isDesktop = window.innerWidth >= 1024;
-            
             if (isDesktop) {
                 document.body.classList.remove('mobile-mode');
-                // Desktop Default State: Timeline Active
                 if (!document.querySelector('.left-panel-content.desktop-active')) {
                    switchDesktopPanel('timeline');
                 }
             } else {
                 document.body.classList.add('mobile-mode');
             }
-            
             if (map) setTimeout(() => map.invalidateSize(), 200);
         }
 
-        // Mobile Tab Switcher
         function switchTab(tabId, btn) {
             if (window.innerWidth >= 1024) return;
             if(btn) { document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
@@ -515,7 +453,6 @@
             if(tabId === 'map' && map) setTimeout(() => map.invalidateSize(), 100);
         }
 
-        // Desktop Panel Switcher (Left Side)
         function switchDesktopPanel(panelId) {
             document.querySelectorAll('.left-panel-content').forEach(el => el.classList.remove('desktop-active'));
             document.getElementById('view-' + panelId).classList.add('desktop-active');
@@ -591,12 +528,27 @@
 
         function filterMap(type, btn) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-            
             if(type === 'all') {
                 renderMarkers(units);
             } else {
                 renderMarkers(units.filter(u => u.details_range.includes(type)));
             }
+        }
+
+        // =========================================
+        // LIGHTBOX FUNCTIONALITY
+        // =========================================
+        function openLightbox(src) {
+            const overlay = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = src;
+            overlay.classList.add('active');
+        }
+
+        function closeLightbox() {
+            const overlay = document.getElementById('lightbox');
+            overlay.classList.remove('active');
+            setTimeout(() => { document.getElementById('lightbox-img').src = ''; }, 300);
         }
 
         function openPopup(data) {
@@ -607,12 +559,13 @@
             const typeBadge = document.getElementById('p-type');
             typeBadge.className = data.location_type.includes("ภายนอก") ? "badge badge-out" : "badge badge-in";
             typeBadge.innerText = data.location_type.includes("ภายนอก") ? "ภายนอกอาคาร" : "ภายในอาคาร";
+            
             const gallery = document.getElementById('p-gallery');
-            gallery.innerHTML = data.images.length ? data.images.map(img => `<img src="${img}" onclick="window.open('${img}')">`).join('') : `<div style="width:100%; height:10rem; background:#eee; border-radius:1.5rem; display:flex; justify-content:center; align-items:center; color:#999; font-size:1.6rem;">ไม่มีรูปภาพ</div>`;
+            // แก้ไขตรงนี้: เรียกใช้ openLightbox แทน window.open
+            gallery.innerHTML = data.images.length ? data.images.map(img => `<img src="${img}" onclick="openLightbox('${img}')">`).join('') : `<div style="width:100%; height:10rem; background:#eee; border-radius:1.5rem; display:flex; justify-content:center; align-items:center; color:#999; font-size:1.6rem;">ไม่มีรูปภาพ</div>`;
             
             const navBtn = document.getElementById('btn-navigate');
             if(data.lat && data.lng) {
-                 // แก้ไข Link ให้ถูกต้องเป็น Google Maps Search
                  navBtn.href = `https://www.google.com/maps/search/?api=1&query=${data.lat},${data.lng}`;
                  navBtn.style.display = 'inline-flex';
             } else {
