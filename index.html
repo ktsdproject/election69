@@ -6,31 +6,36 @@
     <title>Election Quest Map</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         /* =========================================
            1. SHARED STYLES (Base)
            ========================================= */
-        html { font-size: 10px; } /* Default base size */
+        html { font-size: 10px; } 
         body {
-            font-family: 'Sarabun', sans-serif;
+            /* ใช้ Prompt เป็นหลักเพื่อให้ดูเหมือนเสาชิงช้า */
+            font-family: 'Sarabun', sans-serif; 
             background-color: #202020;
             margin: 0;
-            overflow: hidden; /* Desktop default, mobile handles differently */
+            overflow: hidden; 
         }
-        h1, h2, h3, .nav-tab, .badge, .filter-btn { font-family: 'Mali', cursive; }
+
+        /* หัวข้อทั้งหมดใช้ Prompt (หนา/บาง ตามน้ำหนัก) */
+        h1, h2, h3, .nav-tab, .badge, .filter-btn, .bma-font { 
+            font-family: 'Prompt', sans-serif; 
+        }
 
         /* =========================================
-           2. MOBILE VIEW (Default / App Style)
-           - บังคับใช้เมื่อหน้าจอเล็กกว่า 1024px
+           2. MOBILE VIEW (Default)
            ========================================= */
         .game-frame {
             position: relative; overflow: hidden;
             background-color: #f0f4f8;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            /* Mobile Default Setup */
             width: 95vw; height: calc(95vw * 1708 / 960);
             max-width: 500px; max-height: 890px;
             margin: auto; border-radius: 2rem;
@@ -38,13 +43,12 @@
             transform-origin: center top; 
         }
 
-        /* Center the frame on mobile */
         body.mobile-mode {
             display: flex; justify-content: center; align-items: center;
             height: 100vh; overflow: auto;
         }
 
-        /* Top Nav (Tabs) */
+        /* Top Nav */
         .top-nav {
             flex-shrink: 0; height: 6rem; background: #fff; display: flex;
             box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.05); z-index: 100;
@@ -56,38 +60,37 @@
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             border-bottom: 0.4rem solid transparent;
         }
-        .nav-tab.active { background: #fff; color: #4ECDC4; border-bottom: 0.4rem solid #4ECDC4; }
+        .nav-tab.active { background: #fff; color: #00744b; border-bottom: 0.4rem solid #00744b; } /* สีเขียว กทม */
 
-        /* Content Area & Views */
+        /* Content Area */
         .content-area { flex: 1; position: relative; overflow: hidden; display: flex; }
-        
-        .tab-view {
-            width: 100%; height: 100%;
-            display: none; flex-direction: column; /* Mobile: Hide by default */
-        }
-        .tab-view.active { display: flex; } /* Mobile: Show only active */
+        .tab-view { width: 100%; height: 100%; display: none; flex-direction: column; }
+        .tab-view.active { display: flex; }
 
         /* Timeline Specific */
         #view-timeline { overflow-y: auto; padding: 2rem; background: #fff; }
         .timeline-header { text-align: center; margin-bottom: 3rem; margin-top: 1rem; }
+        
         .timeline-item { display: flex; gap: 1.5rem; position: relative; padding-bottom: 3rem; }
         .timeline-item::before {
             content: ''; position: absolute; left: 1.4rem; top: 3.5rem; bottom: 0;
             width: 0.3rem; background: #e0e0e0; z-index: 0;
         }
         .timeline-item:last-child::before { display: none; }
+        
         .t-circle {
             width: 3.5rem; height: 3.5rem; border-radius: 50%; flex-shrink: 0; z-index: 1;
             display: flex; justify-content: center; align-items: center;
             font-size: 1.8rem; color: white; border: 0.3rem solid white;
-            box-shadow: 0 0.3rem 0.5rem rgba(0,0,0,0.1);
+            box-shadow: 0 0.3rem 0.5rem rgba(0,0,0,0.1); font-family: 'Prompt';
         }
-        .t-status-done .t-circle { background: #4CAF50; }
+        .t-status-done .t-circle { background: #00744b; } /* สีเขียว */
         .t-status-active .t-circle { background: #FF9800; animation: pulse 1.5s infinite; }
         .t-status-future .t-circle { background: #ddd; color: #aaa; }
+        
         .t-content h3 { font-size: 1.9rem; font-weight: bold; margin: 0; color: #333; line-height: 1.3; }
         .t-content p { font-size: 1.5rem; color: #666; margin: 0.4rem 0; line-height: 1.4; }
-        .t-content .t-date { font-size: 1.4rem; font-weight: 600; color: #888; margin-bottom: 0.5rem; display: block; }
+        .t-content .t-date { font-size: 1.4rem; font-weight: 600; color: #888; margin-bottom: 0.5rem; display: block; font-family: 'Prompt'; }
         .t-status-active .t-content h3 { color: #FF9800; }
         
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); } 70% { box-shadow: 0 0 0 1rem rgba(255, 152, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); } }
@@ -104,7 +107,7 @@
             padding: 0.8rem 1.5rem; border-radius: 2rem; font-size: 1.6rem; font-weight: bold; color: #555;
             box-shadow: 0 0.4rem 0.5rem rgba(0,0,0,0.1); cursor: pointer;
         }
-        .filter-btn.active { background: #4ECDC4; border-color: #4ECDC4; color: white; }
+        .filter-btn.active { background: #00744b; border-color: #00744b; color: white; } /* ปรับสีปุ่มเป็นเขียว */
         .leaflet-control-zoom a {
             background-color: #FFD700 !important; color: #333 !important;
             border-radius: 1rem !important; width: 4rem !important; height: 4rem !important;
@@ -135,51 +138,30 @@
 
         /* =========================================
            3. DESKTOP / TABLET LANDSCAPE (>1024px)
-           - ปลดล็อก layout ให้เต็มจอ
-           - ซ้าย: Timeline, ขวา: Map
            ========================================= */
         @media (min-width: 1024px) {
             body { 
-                overflow: hidden; /* Desktop ไม่ต้อง Scroll body หลัก */
-                background-color: #f0f4f8; /* Background เต็มจอ */
+                overflow: hidden; 
+                background-color: #f0f4f8;
             }
-            
             .game-frame {
-                /* Reset Mobile Constraints */
                 width: 100vw; height: 100vh;
                 max-width: none; max-height: none;
                 margin: 0; border-radius: 0;
                 box-shadow: none;
             }
-
-            .top-nav { display: none; } /* ซ่อน Tab Bar บน Desktop */
-
-            .content-area {
-                flex-direction: row; /* เรียงแนวนอน */
-            }
-
-            /* --- Left Panel: Timeline --- */
+            .top-nav { display: none; } 
+            .content-area { flex-direction: row; }
             #view-timeline {
-                display: block !important; /* บังคับโชว์ตลอด */
-                width: 35%; /* ความกว้าง Timeline */
-                min-width: 350px;
-                max-width: 500px;
-                border-right: 1px solid #ddd;
-                height: 100%;
-                z-index: 2;
+                display: block !important; 
+                width: 35%; min-width: 350px; max-width: 500px;
+                border-right: 1px solid #ddd; height: 100%; z-index: 2;
                 box-shadow: 2px 0 10px rgba(0,0,0,0.05);
             }
-            .mobile-only-btn { display: none; } /* ซ่อนปุ่ม 'ไปที่แผนที่' */
-
-            /* --- Right Panel: Map --- */
+            .mobile-only-btn { display: none; }
             #view-map {
-                display: block !important; /* บังคับโชว์ตลอด */
-                flex: 1; /* กินพื้นที่ที่เหลือ */
-                height: 100%;
-                position: relative;
+                display: block !important; flex: 1; height: 100%; position: relative;
             }
-
-            /* Popup บน Desktop ให้ลอยตรงกลางสวยๆ */
             .info-card {
                 width: 500px; height: auto; max-height: 80vh;
                 border-radius: 2rem;
@@ -192,7 +174,9 @@
 
     </style>
 </head>
-<body class="mobile-mode"> <div class="game-frame">
+<body class="mobile-mode"> 
+
+    <div class="game-frame">
         
         <nav class="top-nav">
             <button class="nav-tab active" onclick="switchTab('timeline', this)">📅 ไทม์ไลน์</button>
@@ -202,14 +186,20 @@
         <div class="content-area">
             
             <div id="view-timeline" class="tab-view active">
-                <div class="timeline-header">
-                    <h1 style="font-size: 3rem; margin:0; color:#333;">ปฏิทินเลือกตั้ง</h1>
-                    <p style="font-size: 1.6rem; color:#888;">พ.ศ. 2568 - 2569</p>
+                
+                <div class="timeline-header" style="margin-bottom: 2rem;">
+                    <h1 style="font-size: 3.5rem; margin:0; color:#414141; line-height: 1.1;">
+                        กรุงเทพมหานคร<br>
+                        เขตเลือกตั้งที่ 4
+                    </h1>
+                    <h2 style="font-size: 2.4rem; margin-top: 0.5rem; color:#00744b; font-weight: 600;">
+                        เขตคลองเตยและเขตวัฒนา
+                    </h2>
                 </div>
                 <div id="timeline-container"></div>
                 <button class="mobile-only-btn" onclick="document.querySelectorAll('.nav-tab')[1].click()" 
                     style="width: 100%; font-size: 2rem; padding: 1.5rem; margin-top: 2rem; margin-bottom: 2rem;
-                        background: #eee; color: #555; border: none; border-radius: 2rem; font-weight: bold; cursor: pointer; font-family: 'Mali';">
+                        background: #eee; color: #555; border: none; border-radius: 2rem; font-weight: bold; cursor: pointer; font-family: 'Prompt';">
                     ไปที่แผนที่ 👉
                 </button>
             </div>
@@ -246,7 +236,6 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // --- DATA SECTION ---
         const timelineData = [
             { dateText: "12 ธ.ค. 68", title: "พ.ร.ฎ.ยุบสภาฯ มีผลบังคับใช้", desc: "พระราชกฤษฎีกายุบสภาผู้แทนราษฎร พ.ศ.2568 เริ่มมีผล", startDate: new Date("2025-12-12T00:00:00"), endDate: new Date("2025-12-12T23:59:59") },
             { dateText: "15 ธ.ค. 68", title: "กกต. ประกาศให้มีการเลือกตั้ง", desc: "", startDate: new Date("2025-12-15T00:00:00"), endDate: new Date("2025-12-15T23:59:59") },
@@ -270,28 +259,20 @@
 
         let map, markers = [];
 
-        // --- RESPONSIVE LOGIC ---
         function checkResponsive() {
             const isDesktop = window.innerWidth >= 1024;
-            
-            // สลับ Class ที่ Body
             if (isDesktop) {
                 document.body.classList.remove('mobile-mode');
-                // Desktop: ตั้งค่า Font คงที่ ไม่ต้อง Scale ตามจอ
                 document.documentElement.style.fontSize = '10px';
-                // Desktop: ต้องให้ Map วาดใหม่เมื่อเปลี่ยนขนาดจอ
                 if (map) setTimeout(() => map.invalidateSize(), 100);
             } else {
                 document.body.classList.add('mobile-mode');
-                // Mobile: เรียกฟังก์ชัน Scale
                 adjustGameScaling();
             }
         }
 
         function adjustGameScaling() {
-            // ทำงานเฉพาะ Mobile Mode
             if (window.innerWidth >= 1024) return;
-
             const gameFrame = document.querySelector('.game-frame');
             if (!gameFrame) return;
             const designWidth = 960;
@@ -301,17 +282,14 @@
             if(map) setTimeout(() => map.invalidateSize(), 300);
         }
 
-        // --- TAB SYSTEM (Mobile) ---
         function switchTab(tabId, btn) {
-            if (window.innerWidth >= 1024) return; // Desktop ไม่ต้องกด Tab
-
+            if (window.innerWidth >= 1024) return;
             if(btn) { document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
             document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
             document.getElementById('view-' + tabId).classList.add('active');
             if(tabId === 'map' && map) setTimeout(() => map.invalidateSize(), 100);
         }
 
-        // --- LOGIC: MAP & TIMELINE ---
         function initTimeline() {
             const container = document.getElementById('timeline-container');
             const now = new Date();
@@ -348,7 +326,7 @@
                 let typeColor = unit.location_type.includes("ภายนอก") ? "red" : "blue";
                 let customIcon = L.divIcon({
                     className: 'custom-pin',
-                    html: `<div style="background-color: ${typeColor === 'red' ? '#FF6B6B' : '#4ECDC4'}; width: 3rem; height: 3rem; border-radius: 50%; border: 0.3rem solid white; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; font-size: 1.5rem;">${typeColor === 'red' ? '☀️' : '🏢'}</div>`,
+                    html: `<div style="background-color: ${typeColor === 'red' ? '#FF6B6B' : '#08c531'}; width: 3rem; height: 3rem; border-radius: 50%; border: 0.3rem solid white; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; font-size: 1.5rem;">${typeColor === 'red' ? '☀️' : '🏢'}</div>`,
                     iconSize: [30, 30], iconAnchor: [15, 15]
                 });
                 markers.push(L.marker([unit.lat, unit.lng], { icon: customIcon }).addTo(map).on('click', () => openPopup(unit)));
@@ -376,7 +354,6 @@
         function closePopup(e) { if (e.target.id === 'info-overlay') closePopupDirect(); }
         function closePopupDirect() { document.getElementById('info-overlay').classList.remove('visible'); }
 
-        // --- INIT ---
         window.addEventListener('load', () => { 
             checkResponsive();
             initTimeline();
