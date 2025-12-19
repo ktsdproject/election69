@@ -142,18 +142,29 @@
         /* Map Specific */
         #map { width: 100%; height: 100%; z-index: 1; }
         .filter-container {
-            position: absolute; top: 1.5rem; left: 0; width: 100%;
-            display: flex; justify-content: flex-start; gap: 0.8rem; 
-            z-index: 500; padding: 0 1.5rem; box-sizing: border-box; pointer-events: none;
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch;
+            /* กำหนดตำแหน่ง */
+            position: absolute; 
+            top: 2rem;           /* เว้นจากขอบบน */
+            left: 1.5rem;        /* เว้นจากขอบซ้าย */
+            width: auto;         /* ให้กว้างเท่าที่จำเป็น (ไม่เต็มจอ) */
+            height: auto;        /* ให้สูงตามจำนวนปุ่ม */
+            max-height: 80%;     /* ถ้าปุ่มเยอะเกิน ให้สูงไม่เกิน 80% ของจอ */
+            z-index: 500; 
+            pointer-events: none; /* เพื่อให้กดทะลุพื้นที่ว่างไปโดนแผนที่ได้ */
+
+            /* --- ส่วนสำคัญที่ทำให้เป็นแนวตั้ง --- */
+            display: flex; 
+            flex-direction: column; /* เรียงจากบนลงล่าง */
+            align-items: flex-start; /* จัดปุ่มชิดซ้าย */
+            gap: 1rem;              /* ระยะห่างระหว่างปุ่ม */
+
         }
         
         .filter-btn {
             pointer-events: auto; background: white; border: 1px solid #ddd;
-            padding: 0.6rem 1.5rem; 
+            padding: 0.4rem 1.2rem; 
             border-radius: 2rem; 
-            font-size: 1.4rem; 
+            font-size: 1.6rem; 
             font-weight: bold; color: #555;
             box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.1); 
             cursor: pointer; white-space: nowrap; transition: all 0.2s;
@@ -545,7 +556,7 @@
             map = L.map('map', { zoomControl: true }).setView([13.720, 100.555], 14);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '©OpenStreetMap', maxZoom: 19 }).addTo(map);
             renderMarkers(units);
-            map.zoomControl.setPosition('topright');
+            map.zoomControl.setPosition('bottomright');
         }
 
         function renderMarkers(data) {
