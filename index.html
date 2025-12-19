@@ -10,175 +10,171 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* --- CORE SCALING STYLES (ยกมาจากโค้ดต้นแบบของคุณ) --- */
-        html {
-            /* font-size จะถูกกำหนดโดย JS adjustmentGameScaling */
-        }
+        /* --- 1. CORE LAYOUT --- */
+        html { /* Font size handled by JS */ }
         body {
-            font-family: 'Mali', cursive; /* เปลี่ยนฟอนต์หลักให้น่ารัก */
+            font-family: 'Mali', cursive;
             background-color: #202020;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; margin: 0; overflow: hidden;
         }
+
         .game-frame {
+            position: relative; overflow: hidden;
+            background-color: #f0f4f8;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            width: 95vw; height: calc(95vw * 1708 / 960);
+            max-width: 500px; max-height: 890px;
+            margin: auto; border-radius: 2rem;
+            display: flex; flex-direction: column; /* จัดเรียงแนวตั้ง (Nav บน, เนื้อหา ล่าง) */
+        }
+        @media (min-aspect-ratio: 960/1708) {
+            .game-frame { height: 90vh; width: calc(90vh * 960 / 1708); }
+        }
+
+        /* --- 2. TOP TAB BAR (Sheet Style) --- */
+        .top-nav {
+            flex-shrink: 0; /* ไม่ให้หด */
+            height: 6rem;
+            background: #fff;
+            display: flex;
+            box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .nav-tab {
+            flex: 1; border: none; background: #f4f6f8;
+            font-family: 'Mali', cursive;
+            font-size: 1.8rem; font-weight: bold; color: #888;
+            cursor: pointer; position: relative;
+            transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            border-bottom: 0.4rem solid transparent;
+        }
+        .nav-tab:hover { background: #eee; }
+        
+        /* Active State */
+        .nav-tab.active {
+            background: #fff;
+            color: #4ECDC4;
+            border-bottom: 0.4rem solid #4ECDC4;
+        }
+
+        /* --- 3. CONTENT AREA --- */
+        .content-area {
+            flex: 1; /* กินพื้นที่ที่เหลือทั้งหมด */
             position: relative;
             overflow: hidden;
-            background-color: #ffffff;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            width: 95vw;
-            height: calc(95vw * 1708 / 960);
-            max-width: 500px; /* ปรับ max-width ให้เหมาะสมกับ Maps */
-            max-height: 890px;
-            margin: auto;
-            border-radius: 2rem; /* มุมโค้งเหมือนมือถือ */
-        }
-        /* ถ้าจอสูง ให้ยึดความสูงเป็นหลัก */
-        @media (min-aspect-ratio: 960/1708) {
-            .game-frame {
-                height: 90vh;
-                width: calc(90vh * 960 / 1708);
-            }
         }
 
-        /* --- SCREEN MANAGEMENT --- */
-        .game-screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            opacity: 0; visibility: hidden;
-            transition: opacity 0.4s ease-in-out;
-            background-color: #f0f4f8;
+        .tab-view {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; /* ซ่อนไว้ก่อน */
+            flex-direction: column;
         }
-        .game-screen.active {
-            opacity: 1; visibility: visible;
+        .tab-view.active { display: flex; }
+
+        /* --- 4. TIMELINE VIEW STYLES --- */
+        #view-timeline {
+            overflow-y: auto; /* เลื่อนแนวตั้งได้ */
+            padding: 2rem;
+            background: #fff;
+        }
+        .timeline-header {
+            text-align: center; margin-bottom: 3rem; margin-top: 1rem;
+        }
+        
+        .timeline-item { display: flex; gap: 1.5rem; position: relative; padding-bottom: 3rem; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: 1.4rem; top: 3.5rem; bottom: 0;
+            width: 0.3rem; background: #e0e0e0; z-index: 0;
+        }
+        .timeline-item:last-child::before { display: none; }
+
+        .t-circle {
+            width: 3.5rem; height: 3.5rem; border-radius: 50%; flex-shrink: 0; z-index: 1;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.8rem; color: white; border: 0.3rem solid white;
+            box-shadow: 0 0.3rem 0.5rem rgba(0,0,0,0.1);
+        }
+        
+        /* Status Colors */
+        .t-status-done .t-circle { background: #4CAF50; }
+        .t-status-active .t-circle { background: #FF9800; animation: pulse 1.5s infinite; }
+        .t-status-future .t-circle { background: #ddd; color: #aaa; }
+        
+        .t-content h3 { font-size: 2rem; font-weight: bold; margin: 0; color: #333; }
+        .t-content p { font-size: 1.6rem; color: #666; margin: 0.2rem 0; }
+        .t-content .t-date { font-size: 1.4rem; font-weight: 600; color: #888; margin-bottom: 0.5rem; display: block; }
+        .t-status-active .t-content h3, .t-status-active .t-content .t-date { color: #FF9800; }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
+            70% { box-shadow: 0 0 0 1rem rgba(255, 152, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
         }
 
-        /* --- MAP STYLES --- */
-        #map {
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+        /* --- 5. MAP VIEW STYLES --- */
+        #map { width: 100%; height: 100%; z-index: 1; }
+        
+        .filter-container {
+            position: absolute; top: 2rem; left: 0; width: 100%;
+            display: flex; justify-content: center; gap: 1rem;
+            z-index: 500; padding: 0 2rem; box-sizing: border-box;
+            pointer-events: none; /* ให้คลิกทะลุพื้นที่ว่าง */
         }
-        /* ปรับแต่งปุ่ม Zoom ของ Leaflet ให้เข้ากับธีม */
-        .leaflet-control-zoom {
-            border: none !important;
-            margin-bottom: 15rem !important; /* ดันขึ้นหนี UI ด้านล่าง */
-            margin-right: 2rem !important;
+        .filter-btn {
+            pointer-events: auto; /* ให้ปุ่มคลิกได้ */
+            background: white; border: 0.2rem solid #ddd;
+            padding: 0.8rem 1.5rem; border-radius: 2rem;
+            font-size: 1.6rem; font-weight: bold; color: #555;
+            box-shadow: 0 0.4rem 0.5rem rgba(0,0,0,0.1); cursor: pointer;
         }
+        .filter-btn.active { background: #4ECDC4; border-color: #4ECDC4; color: white; }
+
+        .leaflet-control-zoom { border: none !important; margin-bottom: 15rem !important; margin-right: 2rem !important; }
         .leaflet-control-zoom a {
-            background-color: #FFD700 !important;
-            color: #333 !important;
-            border-radius: 1rem !important;
-            width: 4rem !important;
-            height: 4rem !important;
-            line-height: 4rem !important;
-            font-size: 2.5rem !important;
-            box-shadow: 0 0.5rem 0 #cba800 !important;
-            margin-bottom: 1rem !important;
+            background-color: #FFD700 !important; color: #333 !important;
+            border-radius: 1rem !important; width: 4rem !important; height: 4rem !important;
+            line-height: 4rem !important; font-size: 2.5rem !important;
+            box-shadow: 0 0.5rem 0 #cba800 !important; margin-bottom: 1rem !important;
         }
 
-        /* --- CUSTOM UI ELEMENTS (REM UNITS) --- */
-        .start-btn {
-            background-color: #FF6B6B;
-            color: white;
-            font-size: 3.5rem;
-            padding: 1.5rem 4rem;
-            border-radius: 5rem;
-            border: none;
-            box-shadow: 0 0.8rem 0 #D64545;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .start-btn:active {
-            transform: translateY(0.5rem);
-            box-shadow: 0 0.3rem 0 #D64545;
-        }
-
-        /* --- POPUP CARD STYLE --- */
+        /* --- 6. POPUP DETAILS (Bottom Sheet) --- */
         .info-popup-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: flex; justify-content: center; align-items: flex-end;
-            opacity: 0; visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            z-index: 1000; display: flex; justify-content: center; align-items: flex-end;
+            opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .info-popup-overlay.visible {
-            opacity: 1; visibility: visible;
-        }
+        .info-popup-overlay.visible { opacity: 1; visibility: visible; }
         .info-card {
-            background: white;
-            width: 100%;
-            height: 75%; /* สูง 75% ของจอ */
-            border-radius: 4rem 4rem 0 0;
-            padding: 3rem;
-            box-sizing: border-box;
-            transform: translateY(100%);
-            transition: transform 0.3s ease-out;
-            display: flex; flex-direction: column;
-            position: relative;
+            background: white; width: 100%; height: 75%;
+            border-radius: 4rem 4rem 0 0; padding: 3rem;
+            transform: translateY(100%); transition: transform 0.3s ease-out;
+            display: flex; flex-direction: column; position: relative;
         }
-        .info-popup-overlay.visible .info-card {
-            transform: translateY(0);
-        }
+        .info-popup-overlay.visible .info-card { transform: translateY(0); }
 
-        .close-btn {
+        .close-btn-circle {
             position: absolute; top: 2rem; right: 2rem;
             background: #eee; width: 4rem; height: 4rem;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-size: 2rem; color: #555; cursor: pointer;
         }
 
-        /* Gallery Scroll */
+        /* Gallery & Badges */
         .gallery-scroll {
-            display: flex; overflow-x: auto; gap: 1.5rem;
-            padding: 1rem 0; margin-top: 2rem;
+            display: flex; overflow-x: auto; gap: 1.5rem; padding: 1rem 0; margin-top: 2rem;
             scroll-snap-type: x mandatory;
         }
         .gallery-scroll::-webkit-scrollbar { display: none; }
         .gallery-scroll img {
-            height: 15rem; width: auto;
-            border-radius: 1.5rem;
-            scroll-snap-align: start;
-            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+            height: 15rem; width: auto; border-radius: 1.5rem;
+            scroll-snap-align: start; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
         }
-
-        /* Categories Badge */
-        .badge {
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            border-radius: 2rem;
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-right: 1rem;
-        }
+        .badge { display: inline-block; padding: 0.5rem 1.5rem; border-radius: 2rem; font-size: 1.8rem; font-weight: bold; margin-right: 1rem; }
         .badge-out { background: #FFE5D9; color: #D64545; }
         .badge-in { background: #E3F2FD; color: #1E88E5; }
-
-        /* Filter Tabs */
-        .filter-container {
-            position: absolute; top: 2rem; left: 0; width: 100%;
-            display: flex; justify-content: center; gap: 1rem;
-            z-index: 500;
-            padding: 0 2rem;
-            box-sizing: border-box;
-        }
-        .filter-btn {
-            background: white; border: 2px solid #ddd;
-            padding: 0.8rem 1.5rem; border-radius: 2rem;
-            font-size: 1.6rem; font-weight: bold; color: #555;
-            box-shadow: 0 0.4rem 0.5rem rgba(0,0,0,0.1);
-            cursor: pointer;
-        }
-        .filter-btn.active {
-            background: #4ECDC4; border-color: #4ECDC4; color: white;
-        }
 
     </style>
 </head>
@@ -186,25 +182,46 @@
 
     <div class="game-frame">
         
-        <div id="start-screen" class="game-screen active" style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); justify-content: center; align-items: center; text-align: center;">
-            <div style="font-size: 8rem;">🗳️</div>
-            <h1 style="font-size: 5rem; color: #333; margin: 2rem 0;">แผนที่<br>จุดเลือกตั้ง</h1>
-            <p style="font-size: 2rem; color: #666; margin-bottom: 5rem;">ค้นหา 130 หน่วยเลือกตั้ง<br>ในรูปแบบแผนที่</p>
-            <button class="start-btn" onclick="goToMap()">เริ่มค้นหา</button>
-        </div>
+        <nav class="top-nav">
+            <button class="nav-tab active" onclick="switchTab('timeline', this)">
+                📅 ไทม์ไลน์
+            </button>
+            <button class="nav-tab" onclick="switchTab('map', this)">
+                🗺️ แผนที่
+            </button>
+        </nav>
 
-        <div id="map-screen" class="game-screen">
-            <div class="filter-container">
-                <button class="filter-btn active" onclick="filterMap('all', this)">ทั้งหมด</button>
-                <button class="filter-btn" onclick="filterMap('out', this)">ภายนอก</button>
-                <button class="filter-btn" onclick="filterMap('in', this)">ภายใน</button>
+        <div class="content-area">
+            
+            <div id="view-timeline" class="tab-view active">
+                <div class="timeline-header">
+                    <h1 style="font-size: 3rem; margin:0; color:#333;">ปฏิทินเลือกตั้ง</h1>
+                    <p style="font-size: 1.6rem; color:#888;">ติดตามสถานะและวันสำคัญ</p>
+                </div>
+                <div id="timeline-container">
+                    </div>
+                <button onclick="document.querySelectorAll('.nav-tab')[1].click()" 
+                    style="width: 100%; font-size: 2rem; padding: 1.5rem; margin-top: 2rem; margin-bottom: 2rem;
+                        background: #eee; color: #555; border: none; border-radius: 2rem; font-weight: bold;
+                        cursor: pointer;">
+                    ไปที่แผนที่ 👉
+                </button>
             </div>
 
-            <div id="map"></div>
+            <div id="view-map" class="tab-view">
+                <div class="filter-container">
+                    <button class="filter-btn active" onclick="filterMap('all', this)">ทั้งหมด</button>
+                    <button class="filter-btn" onclick="filterMap('out', this)">ภายนอก</button>
+                    <button class="filter-btn" onclick="filterMap('in', this)">ภายใน</button>
+                </div>
+                <div id="map"></div>
+            </div>
+
         </div>
 
         <div id="info-overlay" class="info-popup-overlay" onclick="closePopup(event)">
-            <div class="info-card" onclick="event.stopPropagation()"> <div class="close-btn" onclick="closePopupDirect()">✕</div>
+            <div class="info-card" onclick="event.stopPropagation()">
+                <div class="close-btn-circle" onclick="closePopupDirect()">✕</div>
                 
                 <h2 id="p-name" style="font-size: 3rem; font-weight: 700; color: #333; line-height: 1.2;">ชื่อสถานที่</h2>
                 <p id="p-sub" style="font-size: 2rem; color: #888; margin-top: 0.5rem;">รายละเอียดสถานที่ย่อย</p>
@@ -218,7 +235,7 @@
 
                 <div style="margin-top: 2rem; padding: 2rem; background: #f9f9f9; border-radius: 2rem; border: 2px dashed #ddd;">
                     <p style="font-size: 1.6rem; font-weight: 700; color: #555;">Note:</p>
-                    <p id="p-note" style="font-size: 1.8rem; color: #333;">รายละเอียดเพิ่มเติม...</p>
+                    <p id="p-note" style="font-size: 1.8rem; color: #333;">-</p>
                 </div>
             </div>
         </div>
@@ -227,7 +244,38 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // --- 1. CONFIG & DATA ---
+        // --- DATA ---
+        const timelineData = [
+            {
+                dateText: "12 ธ.ค. 68",
+                title: "ยุบสภา",
+                desc: "ประกาศยุบสภาผู้แทนราษฎร เพื่อเตรียมการเลือกตั้งใหม่",
+                startDate: new Date("2025-12-12T00:00:00"),
+                endDate: new Date("2025-12-12T23:59:59")
+            },
+            {
+                dateText: "15 ธ.ค. 68",
+                title: "กกต. ประกาศเลือกตั้ง",
+                desc: "คณะกรรมการการเลือกตั้งประกาศกำหนดวันเลือกตั้ง",
+                startDate: new Date("2025-12-15T00:00:00"),
+                endDate: new Date("2025-12-15T23:59:59")
+            },
+            {
+                dateText: "27-31 ธ.ค. 68",
+                title: "วันรับสมัคร ส.ส.",
+                desc: "เปิดรับสมัครสมาชิกสภาผู้แทนราษฎร (08.30 - 16.30 น.)",
+                startDate: new Date("2025-12-27T08:30:00"),
+                endDate: new Date("2025-12-31T16:30:00")
+            },
+            {
+                dateText: "1 ก.พ. 69", 
+                title: "วันเลือกตั้ง 🗳️",
+                desc: "วันลงคะแนนเสียงเลือกตั้ง (08.00 - 17.00 น.)",
+                startDate: new Date("2026-02-01T08:00:00"),
+                endDate: new Date("2026-02-01T17:00:00")
+            }
+        ];
+
         const units = [
             {
                 "id": 1,
@@ -235,10 +283,10 @@
                 "name_details": "บริเวณใกล้สหภาพแรงงาน",
                 "unit_count": "3 หน่วย",
                 "lat": 13.724167, "lng": 100.554444,
-                "images": ["https://placehold.co/400x300/orange/white?text=Img1", "https://placehold.co/400x300/orange/white?text=Img2"],
+                "images": ["https://placehold.co/400x300/orange/white?text=จุดที่1"],
                 "details_range": "หน่วยที่ 1-3",
                 "location_type": "ภายนอกอาคาร",
-                "note": "จุดสังเกตคือเต็นท์สีขาวขนาดใหญ่"
+                "note": "เต็นท์สีขาวขนาดใหญ่"
             },
             {
                 "id": 2,
@@ -249,7 +297,7 @@
                 "images": [],
                 "details_range": "หน่วยที่ 4",
                 "location_type": "ภายในอาคาร",
-                "note": "ทางเข้าอยู่ด้านข้างโรงเรียน"
+                "note": "-"
             },
              {
                 "id": 3,
@@ -257,7 +305,7 @@
                 "name_details": "ลานวัด",
                 "unit_count": "2 หน่วย",
                 "lat": 13.710000, "lng": 100.590000,
-                "images": ["https://placehold.co/400x300/green/white?text=Map"],
+                "images": [],
                 "details_range": "หน่วยที่ 5-6",
                 "location_type": "ภายนอกอาคาร",
                 "note": "-"
@@ -266,116 +314,122 @@
 
         let map, markers = [];
 
-        // --- 2. SCALING LOGIC (Core Game System) ---
+        // --- 1. TAB SYSTEM ---
+        function switchTab(tabId, btn) {
+            // Update Buttons (ถ้ากดจากปุ่ม)
+            if(btn) {
+                document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            // Hide all views
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+            
+            // Show target view
+            document.getElementById('view-' + tabId).classList.add('active');
+
+            // Special Case: ถ้าเปิดแผนที่ ต้องสั่งให้ Map render ใหม่ (แก้บั๊ก Map เทา)
+            if(tabId === 'map' && map) {
+                setTimeout(() => { map.invalidateSize(); }, 100);
+            }
+        }
+
+        // --- 2. LOGIC: SCALING & DATA ---
         function adjustGameScaling() {
             const gameFrame = document.querySelector('.game-frame');
             if (!gameFrame) return;
-
-            // Base width is 960 (from your reference code)
             const designWidth = 960;
             const currentWidth = gameFrame.offsetWidth;
-            
-            // Calculate ratio
             const scaleRatio = currentWidth / designWidth;
-            // Set root font size so 1rem scales with the container
-            // 10px base * ratio. E.g., if full width, 1rem = 10px.
-            const rootFontSize = 10 * scaleRatio; 
-
-            document.documentElement.style.fontSize = `${rootFontSize}px`;
-            
-            // Invalidate map size if map exists (to fix rendering issues on resize)
+            document.documentElement.style.fontSize = `${10 * scaleRatio}px`;
             if(map) setTimeout(() => map.invalidateSize(), 300);
         }
 
-        window.addEventListener('load', () => {
-            adjustGameScaling();
-            initMap(); // โหลดแผนที่รอไว้เลย
-        });
-        window.addEventListener('resize', adjustGameScaling);
+        function initTimeline() {
+            const container = document.getElementById('timeline-container');
+            const now = new Date(); 
+            // const now = new Date("2025-12-28T10:00:00"); // Uncomment to test active date
 
-        // --- 3. NAVIGATION ---
-        function goToMap() {
-            document.getElementById('start-screen').classList.remove('active');
-            document.getElementById('map-screen').classList.add('active');
-            
-            // Leaflet needs a moment to realize container size changed
-            setTimeout(() => {
-                map.invalidateSize();
-            }, 500);
+            let html = '';
+            timelineData.forEach(item => {
+                let statusClass = 't-status-future';
+                let icon = '🔒';
+
+                if (now > item.endDate) {
+                    statusClass = 't-status-done'; icon = '✓';
+                } else if (now >= item.startDate && now <= item.endDate) {
+                    statusClass = 't-status-active'; icon = '🔥';
+                }
+
+                html += `
+                    <div class="timeline-item ${statusClass}">
+                        <div class="t-circle">${icon}</div>
+                        <div class="t-content">
+                            <span class="t-date">${item.dateText}</span>
+                            <h3>${item.title}</h3>
+                            ${item.desc ? `<p>${item.desc}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
-        // --- 4. MAP LOGIC ---
+        // --- 3. LOGIC: MAP ---
         function initMap() {
-            // สร้างแผนที่
+            // สร้าง Map ใน div id="map"
             map = L.map('map', { zoomControl: true }).setView([13.720, 100.555], 14);
-
-            // ใช้ Tile ที่ดูสะอาดตา (CartoDB Positron) หรือ OpenStreetMap
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '©OpenStreetMap, ©CartoDB',
-                maxZoom: 19
+                attribution: '©OpenStreetMap, ©CartoDB', maxZoom: 19
             }).addTo(map);
-
-            // วนลูปสร้าง Marker
             renderMarkers(units);
         }
 
         function renderMarkers(data) {
-            // ล้าง Marker เก่า
             markers.forEach(m => map.removeLayer(m));
             markers = [];
-
             data.forEach(unit => {
-                // เลือกสีไอคอนตามประเภท
                 let typeColor = unit.location_type.includes("ภายนอก") ? "red" : "blue";
-                
-                // สร้าง Custom Icon (Emoji Pin) ให้ดูน่ารัก
                 let customIcon = L.divIcon({
                     className: 'custom-pin',
                     html: `<div style="
                         background-color: ${typeColor === 'red' ? '#FF6B6B' : '#4ECDC4'};
-                        width: 3rem; height: 3rem;
-                        border-radius: 50%;
-                        border: 0.3rem solid white;
+                        width: 3rem; height: 3rem; border-radius: 50%; border: 0.3rem solid white;
                         box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3);
-                        display: flex; justify-content: center; align-items: center;
-                        font-size: 1.5rem;
+                        display: flex; justify-content: center; align-items: center; font-size: 1.5rem;
                     ">${typeColor === 'red' ? '☀️' : '🏢'}</div>`,
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 15] // จุดชี้
+                    iconSize: [30, 30], iconAnchor: [15, 15]
                 });
-
                 let marker = L.marker([unit.lat, unit.lng], { icon: customIcon })
-                    .addTo(map)
-                    .on('click', () => openPopup(unit));
-                
+                    .addTo(map).on('click', () => openPopup(unit));
                 markers.push(marker);
             });
         }
 
-        // --- 5. POPUP SYSTEM (Overlay) ---
+        function filterMap(type, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (type === 'all') renderMarkers(units);
+            else if (type === 'out') renderMarkers(units.filter(u => u.location_type.includes("ภายนอก")));
+            else if (type === 'in') renderMarkers(units.filter(u => u.location_type.includes("ภายใน")));
+        }
+
+        // --- 4. POPUP DETAIL ---
         function openPopup(data) {
-            const overlay = document.getElementById('info-overlay');
-            
-            // ใส่ข้อมูล (DOM Manipulation)
             document.getElementById('p-name').innerText = data.name;
             document.getElementById('p-sub').innerText = data.name_details;
             document.getElementById('p-unit').innerText = data.unit_count;
             document.getElementById('p-note').innerText = data.note;
-
-            // จัดการ Badge
+            
             const typeBadge = document.getElementById('p-type');
             if(data.location_type.includes("ภายนอก")) {
-                typeBadge.className = "badge badge-out";
-                typeBadge.innerText = "ภายนอกอาคาร";
+                typeBadge.className = "badge badge-out"; typeBadge.innerText = "ภายนอกอาคาร";
             } else {
-                typeBadge.className = "badge badge-in";
-                typeBadge.innerText = "ภายในอาคาร";
+                typeBadge.className = "badge badge-in"; typeBadge.innerText = "ภายในอาคาร";
             }
 
-            // จัดการ Gallery
             const gallery = document.getElementById('p-gallery');
-            gallery.innerHTML = ''; // ล้างรูปเก่า
-            
+            gallery.innerHTML = '';
             if (data.images.length > 0) {
                 data.images.forEach(img => {
                     gallery.innerHTML += `<img src="${img}" onclick="window.open('${img}')">`;
@@ -383,37 +437,19 @@
             } else {
                 gallery.innerHTML = `<div style="width:100%; height:10rem; background:#eee; border-radius:1.5rem; display:flex; justify-content:center; align-items:center; color:#999; font-size:1.6rem;">ไม่มีรูปภาพ</div>`;
             }
-
-            overlay.classList.add('visible');
+            document.getElementById('info-overlay').classList.add('visible');
         }
 
-        function closePopup(e) {
-            // ถ้ากดที่พื้นหลังสีดำ (Overlay) ให้ปิด
-            if (e.target.id === 'info-overlay') {
-                closePopupDirect();
-            }
-        }
-        
-        function closePopupDirect() {
-            document.getElementById('info-overlay').classList.remove('visible');
-        }
+        function closePopup(e) { if (e.target.id === 'info-overlay') closePopupDirect(); }
+        function closePopupDirect() { document.getElementById('info-overlay').classList.remove('visible'); }
 
-        // --- 6. FILTER SYSTEM ---
-        function filterMap(type, btn) {
-            // ปรับปุ่ม Active
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            if (type === 'all') {
-                renderMarkers(units);
-            } else if (type === 'out') {
-                const filtered = units.filter(u => u.location_type.includes("ภายนอก"));
-                renderMarkers(filtered);
-            } else if (type === 'in') {
-                const filtered = units.filter(u => u.location_type.includes("ภายใน"));
-                renderMarkers(filtered);
-            }
-        }
+        // --- INIT ---
+        window.addEventListener('load', () => {
+            adjustGameScaling();
+            initTimeline();
+            initMap();
+        });
+        window.addEventListener('resize', adjustGameScaling);
 
     </script>
 </body>
