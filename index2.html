@@ -152,48 +152,34 @@
             pointer-events: auto;
             display: flex; 
             flex-direction: row;      /* บังคับเรียงแนวนอน */
-            justify-content: flex-start; /* ชิดซ้ายเริ่มแรก */
+            justify-content: flex-start; /* ชิดซ้าย */
             align-items: center;
             gap: 0.8rem; 
             
-            overflow-x: auto;         /* ให้เลื่อนแนวนอนได้ */
-            overflow-y: hidden;       /* ซ่อนการเลื่อนแนวตั้ง */
+            overflow-x: auto;         /* เลื่อนแนวนอน */
+            overflow-y: hidden;       
             
-            width: 100%;              /* กว้างเต็มพื้นที่ */
+            width: 100%;              
             max-width: 100%;
-            padding: 5px 5px 10px 5px; /* เพิ่ม padding ด้านล่างนิดหน่อยกันตกขอบ */
+            padding: 5px 5px 10px 5px; 
             
-            /* ทำให้การเลื่อนบนมือถือลื่นขึ้น (สำคัญสำหรับ iOS) */
             -webkit-overflow-scrolling: touch; 
-            
-            /* ซ่อน Scrollbar (ถ้าต้องการ) */
             -ms-overflow-style: none; 
             scrollbar-width: none;
         }
-        
-        /* ซ่อน Scrollbar สำหรับ Chrome/Safari */
-        .scroll-btn-container::-webkit-scrollbar { 
-            display: none; 
-        }
+        .scroll-btn-container::-webkit-scrollbar { display: none; }
 
         .filter-btn {
-            /* บังคับไม่ให้ปุ่มหดตัว หรือขึ้นบรรทัดใหม่เด็ดขาด */
-            flex: 0 0 auto;       
+            flex: 0 0 auto;       /* ห้ามย่อปุ่ม */
             white-space: nowrap;
-            
-            background: white; 
-            border: 1px solid #ddd;
-            padding: 0.6rem 1.4rem; 
-            border-radius: 2rem; 
-            font-size: 1.6rem; 
-            font-weight: 600; 
-            color: #555;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-            cursor: pointer;
+            background: white; border: 1px solid #ddd;
+            padding: 0.6rem 1.4rem; border-radius: 2rem; 
+            font-size: 1.6rem; font-weight: 600; color: #555;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer;
             transition: all 0.2s;
         }
-        
-        .filter-btn.active { background: #00744b; border-color: #00744b; color: white; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,116,75,0.25); }
+        /* Active State will be handled by JS for colors */
+        .filter-btn.active { color: white; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.25); border-color: transparent;}
 
         /* Popup */
         .info-popup-overlay {
@@ -423,7 +409,7 @@
             { id: 29, name: "โรงเรียนวัดคลองเตย", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 65-67", location_type: "ภายในอาคาร", note: "บริเวณห้องประชุม", lat:13.710127615678996, lng:100.5610080164237, images: ["images/id29p01.jpg","images/id29p02.jpg"] },
             { id: 30, name: "โรงเรียนสายน้ำทิพย์", unit_count: "1 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 1", location_type: "ภายในอาคาร", note: "-", lat:13.727872085045814, lng:100.5651743617523, images: ["images/id30p01.jpg"] },
             { id: 31, name: "เต็นท์บริเวณอุทยานเบญจสิริ", unit_count: "3 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 2-4", location_type: "ภายนอกอาคาร", note: "-", lat:13.731233489502825, lng:100.56778359592492, images: ["images/id31p01.jpg","images/id31p02.jpg"] },
-            { id: 32, name: "เต็นท์บริเวณลานกิจกรรมหน้าห้างโลตัส พระราม 4", unit_count: "2 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 5-6", location_type: "ภายนอกอาคาร", note: "-", lat:13.718083720462747, lng:100.56867271431877, images: ["images/id32p01.jpg","images/id32p02.jpg"] },
+            { id: 32, name: "เต็นท์บริเวณลานกิจกรรมหน้าห้างโลตัส พระราม 4", unit_count: "2 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 5-6", location_type: "ภายนอกอาคาร", note: "-", lat:13.718820965526636, lng:100.56867271431877, images: ["images/id32p01.jpg","images/id32p02.jpg"] },
             { id: 33, name: "โรงเรียนสิงฟ้า", unit_count: "2 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 7-8", location_type: "ภายในอาคาร", note: "ลานกิจกรรมโรงเรียน", lat:13.722454849579316, lng:100.57010800374248, images: ["images/id33p01.jpg","images/id33p02.jpg"] },
             { id: 34, name: "อาคารจอดรถโรงเรียนนานาชาติทรีนิตี้ สุขุมวิท 36", unit_count: "3 หน่วย", details_range: "แขวงคลองตัน หน่วยที่ 9-11", location_type: "ภายในอาคาร", note: "ลานจอดรถใต้อาคาร", lat:13.722629815350764, lng:100.57489999591625, images: ["images/id34p01.jpg","images/id34p02.jpg"] },
             { id: 35, name: "เต็นท์บริเวณลานกิจกรรมโรงเรียนปทุมคงคา", unit_count: "5 หน่วย", details_range: "แขวงพระโขนง หน่วยที่ 1-5", location_type: "ภายนอกอาคาร", note: "ลานกีฬาใต้โดม", lat:13.718820965526636, lng:100.58163008606853, images: ["images/id35p01.jpg","images/id35p02.jpg"] },
@@ -471,13 +457,32 @@
 
         let map;
         let markerGroup;
+        
+        // COLOR MAPPING FOR SUB-DISTRICTS
+        const subDistrictColors = {
+            "แขวงคลองเตย": "#28a745",       // Green
+            "แขวงคลองเตยเหนือ": "#17a2b8",  // Teal
+            "แขวงคลองตัน": "#ffc107",       // Yellow/Gold
+            "แขวงคลองตันเหนือ": "#fd7e14",  // Orange
+            "แขวงพระโขนง": "#007bff",       // Blue
+            "แขวงพระโขนงเหนือ": "#6610f2"   // Purple
+        };
+
+        function getSubDistrictColor(details) {
+            // Check exactly which subdistrict it belongs to by matching the start string
+            for (const [name, color] of Object.entries(subDistrictColors)) {
+                if (details.startsWith(name + " ")) {
+                    return color;
+                }
+            }
+            return "#6c757d"; // Default Grey
+        }
 
         // LOGIC
         function checkResponsive() {
             const isDesktop = window.innerWidth >= 1024;
             if (isDesktop) {
                 document.body.classList.remove('mobile-mode');
-                // Ensure correct panel is shown on desktop
                 if (!document.querySelector('.left-panel-content.desktop-active')) {
                    switchDesktopPanel('timeline');
                 }
@@ -590,9 +595,11 @@
         function renderMarkers(data) {
             if (markerGroup) markerGroup.clearLayers();
             data.forEach(unit => {
-                let markerBg = unit.details_range.includes("แขวงคลองเตย") ? "#28a745" : 
-                               (unit.details_range.includes("แขวงคลองตัน") ? "#FFC107" : "#007bff");
-                let textColor = unit.details_range.includes("แขวงคลองตัน") ? "#202020" : "white";
+                let markerBg = getSubDistrictColor(unit.details_range);
+                let textColor = "white";
+                // Adjust text color for yellow background
+                if(markerBg === "#ffc107") textColor = "#202020";
+
                 let label = unit.details_range.includes("หน่วยที่") ? unit.details_range.split("หน่วยที่")[1].trim() : "-";
 
                 // Marker CSS with nowrap
@@ -633,10 +640,10 @@
                 return;
             }
 
-            // ค้นหาใน Array
+            // ค้นหาใน Array with STRICT filtering
             const found = units.find(u => {
-                // เช็คแขวง
-                if (!u.details_range.includes(district)) return false;
+                // เช็คแขวงแบบ STRICT: ต้องขึ้นต้นด้วยชื่อแขวง และตามด้วยเว้นวรรค
+                if (!u.details_range.startsWith(district + " ")) return false;
 
                 // เช็คเลขหน่วย
                 const part = u.details_range.split("หน่วยที่")[1];
@@ -663,9 +670,24 @@
         }
 
         function filterMap(type, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); 
+            // Reset all buttons style
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.backgroundColor = 'white';
+                b.style.color = '#555';
+                b.style.borderColor = '#ddd';
+            }); 
+            
+            // Set active button style
             btn.classList.add('active');
-            renderMarkers(units.filter(u => u.details_range.includes(type)));
+            const activeColor = subDistrictColors[type] || '#00744b';
+            btn.style.backgroundColor = activeColor;
+            btn.style.borderColor = activeColor;
+            // Adjust text color for yellow
+            btn.style.color = (activeColor === "#ffc107") ? "#202020" : "white";
+
+            // Strict Filter: startsWith + space to ensure "คลองเตย" doesn't match "คลองเตยเหนือ"
+            renderMarkers(units.filter(u => u.details_range.startsWith(type + " ")));
         }
 
         function openLightbox(src) {
