@@ -361,7 +361,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // DATA
+ // DATA
         const timelineData = [
             { dateText: "12 ธ.ค. 68", title: "พ.ร.ฎ.ยุบสภาฯ มีผลบังคับใช้", desc: "พระราชกฤษฎีกายุบสภาผู้แทนราษฎร พ.ศ.2568 เริ่มมีผล", startDate: new Date("2025-12-12T00:00:00"), endDate: new Date("2025-12-12T23:59:59") },
             { dateText: "15 ธ.ค. 68", title: "กกต. ประกาศให้มีการเลือกตั้ง", desc: "", startDate: new Date("2025-12-15T00:00:00"), endDate: new Date("2025-12-15T23:59:59") },
@@ -687,7 +687,16 @@
             btn.style.color = (activeColor === "#ffc107") ? "#202020" : "white";
 
             // Strict Filter: startsWith + space to ensure "คลองเตย" doesn't match "คลองเตยเหนือ"
-            renderMarkers(units.filter(u => u.details_range.startsWith(type + " ")));
+            const filteredUnits = units.filter(u => u.details_range.startsWith(type + " "));
+            renderMarkers(filteredUnits);
+
+            // --- NEW: ZOOM TO FIT BOUNDS ---
+            if (filteredUnits.length > 0) {
+                const bounds = calculateBounds(filteredUnits);
+                if (bounds) {
+                    map.fitBounds(bounds, { padding: [50, 50] }); // Add padding so markers aren't on the edge
+                }
+            }
         }
 
         function openLightbox(src) {
