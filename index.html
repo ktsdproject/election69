@@ -305,7 +305,7 @@
             <div id="view-map" class="tab-view">
                 <div class="filter-container">
                     <div class="search-box">
-                        <select id="districtSelect" class="search-dropdown">
+                        <select id="districtSelect" class="search-dropdown" onchange="updateUnitDropdown()">
                             <option value="">เลือกแขวง...</option>
                             <option value="แขวงคลองเตย">คลองเตย</option>
                             <option value="แขวงคลองเตยเหนือ">คลองเตยเหนือ</option>
@@ -314,7 +314,7 @@
                             <option value="แขวงพระโขนง">พระโขนง</option>
                             <option value="แขวงพระโขนงเหนือ">พระโขนงเหนือ</option>
                         </select>
-                        <select id="unitSelect" class="search-dropdown">
+                        <select id="unitSelect" class="search-dropdown" onchange="searchUnit()">
                             <option value="">หน่วยที่...</option>
                             </select>
                         <button class="search-btn" onclick="searchUnit()">🔍</button>
@@ -361,7 +361,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
- // DATA
+       // DATA
         const timelineData = [
             { dateText: "12 ธ.ค. 68", title: "พ.ร.ฎ.ยุบสภาฯ มีผลบังคับใช้", desc: "พระราชกฤษฎีกายุบสภาผู้แทนราษฎร พ.ศ.2568 เริ่มมีผล", startDate: new Date("2025-12-12T00:00:00"), endDate: new Date("2025-12-12T23:59:59") },
             { dateText: "15 ธ.ค. 68", title: "กกต. ประกาศให้มีการเลือกตั้ง", desc: "", startDate: new Date("2025-12-15T00:00:00"), endDate: new Date("2025-12-15T23:59:59") },
@@ -615,34 +615,73 @@
             });
         }
 
-        // --- UPDATED SEARCH FUNCTION WITH DROPDOWNS ---
-        function initSearchDropdowns() {
+        // --- NEW: DYNAMIC DATA PREPARATION ---
+        let districtUnitMap = {}; // Will store { "แขวง...": Set(1, 2, 5, ...) }
+
+        function initDistrictData() {
+            districtUnitMap = {};
+            units.forEach(u => {
+                // Parse "แขวงคลองเตย หน่วยที่ 1-6"
+                let parts = u.details_range.split("หน่วยที่");
+                if(parts.length < 2) return;
+                
+                let district = parts[0].trim();
+                let rangeStr = parts[1].trim();
+                
+                if(!districtUnitMap[district]) {
+                    districtUnitMap[district] = new Set();
+                }
+                
+                // Parse Range: "1-6" or "26, 29" or "7"
+                let ranges = rangeStr.split(",");
+                ranges.forEach(r => {
+                    r = r.trim();
+                    if(r.includes("-")) {
+                        let [start, end] = r.split("-").map(x => parseInt(x));
+                        for(let i=start; i<=end; i++) {
+                            districtUnitMap[district].add(i);
+                        }
+                    } else {
+                        districtUnitMap[district].add(parseInt(r));
+                    }
+                });
+            });
+        }
+
+        // --- UPDATED: POPULATE UNIT DROPDOWN BASED ON DISTRICT ---
+        function updateUnitDropdown() {
+            const districtSelect = document.getElementById('districtSelect');
             const unitSelect = document.getElementById('unitSelect');
-            // Populate unit numbers 1-100
-            for(let i=1; i<=100; i++) {
+            const selectedDistrict = districtSelect.value;
+            
+            // Clear existing options
+            unitSelect.innerHTML = '<option value="">หน่วยที่...</option>';
+            
+            if(!selectedDistrict || !districtUnitMap[selectedDistrict]) return;
+            
+            // Get units and sort numerically
+            const unitList = Array.from(districtUnitMap[selectedDistrict]).sort((a,b) => a - b);
+            
+            unitList.forEach(u => {
                 const opt = document.createElement('option');
-                opt.value = i;
-                opt.innerText = i;
+                opt.value = u;
+                opt.innerText = u;
                 unitSelect.appendChild(opt);
-            }
+            });
         }
 
         function searchUnit() {
             const district = document.getElementById('districtSelect').value;
-            const unitNum = parseInt(document.getElementById('unitSelect').value);
+            const unitVal = document.getElementById('unitSelect').value;
+            
+            if (!district) return; // Wait for district
+            if (!unitVal) return; // Wait for unit selection
 
-            if (!district) {
-                alert("กรุณาเลือกแขวง");
-                return;
-            }
-            if (isNaN(unitNum)) {
-                alert("กรุณาเลือกหน่วยที่");
-                return;
-            }
+            const unitNum = parseInt(unitVal);
 
             // ค้นหาใน Array with STRICT filtering
             const found = units.find(u => {
-                // เช็คแขวงแบบ STRICT: ต้องขึ้นต้นด้วยชื่อแขวง และตามด้วยเว้นวรรค
+                // เช็คแขวงแบบ STRICT
                 if (!u.details_range.startsWith(district + " ")) return false;
 
                 // เช็คเลขหน่วย
@@ -686,15 +725,15 @@
             // Adjust text color for yellow
             btn.style.color = (activeColor === "#ffc107") ? "#202020" : "white";
 
-            // Strict Filter: startsWith + space to ensure "คลองเตย" doesn't match "คลองเตยเหนือ"
+            // Strict Filter
             const filteredUnits = units.filter(u => u.details_range.startsWith(type + " "));
             renderMarkers(filteredUnits);
 
-            // --- NEW: ZOOM TO FIT BOUNDS ---
+            // ZOOM TO FIT BOUNDS
             if (filteredUnits.length > 0) {
                 const bounds = calculateBounds(filteredUnits);
                 if (bounds) {
-                    map.fitBounds(bounds, { padding: [50, 50] }); // Add padding so markers aren't on the edge
+                    map.fitBounds(bounds, { padding: [50, 50] }); 
                 }
             }
         }
@@ -736,7 +775,8 @@
             checkResponsive();
             initTimeline();
             initMap();
-            initSearchDropdowns();
+            // Changed from initSearchDropdowns to initDistrictData
+            initDistrictData();
         });
         window.addEventListener('resize', checkResponsive);
 
