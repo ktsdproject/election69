@@ -77,6 +77,11 @@
         .tab-view { width: 100%; height: 100%; display: none; flex-direction: column; }
         .tab-view.active { display: flex; }
 
+        /* Desktop Switcher - HIDDEN ON MOBILE BY DEFAULT */
+        .desktop-switcher {
+            display: none; /* ซ่อนไว้ก่อนในมือถือ */
+        }
+
         /* Scrollable content inside views */
         .scroll-wrapper { flex: 1; overflow-y: auto; padding: 2rem; }
 
@@ -222,9 +227,11 @@
                 animation: fadeIn 0.3s ease;
             }
             
+            /* SHOW DESKTOP SWITCHER ONLY HERE */
             .desktop-switcher { 
                 flex-shrink: 0;
-                display: flex; justify-content: center; gap: 1rem; 
+                display: flex; /* แสดงผลเฉพาะหน้าจอใหญ่ */
+                justify-content: center; gap: 1rem; 
                 padding: 2rem 0; 
                 background: #fff;
                 border-bottom: 1px solid #f0f0f0;
@@ -361,7 +368,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-       // DATA
+// DATA
         const timelineData = [
             { dateText: "12 ธ.ค. 68", title: "พ.ร.ฎ.ยุบสภาฯ มีผลบังคับใช้", desc: "พระราชกฤษฎีกายุบสภาผู้แทนราษฎร พ.ศ.2568 เริ่มมีผล", startDate: new Date("2025-12-12T00:00:00"), endDate: new Date("2025-12-12T23:59:59") },
             { dateText: "15 ธ.ค. 68", title: "กกต. ประกาศให้มีการเลือกตั้ง", desc: "", startDate: new Date("2025-12-15T00:00:00"), endDate: new Date("2025-12-15T23:59:59") },
