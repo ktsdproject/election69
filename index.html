@@ -368,7 +368,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-// DATA
+       // DATA
         const timelineData = [
             { dateText: "12 ธ.ค. 68", title: "พ.ร.ฎ.ยุบสภาฯ มีผลบังคับใช้", desc: "พระราชกฤษฎีกายุบสภาผู้แทนราษฎร พ.ศ.2568 เริ่มมีผล", startDate: new Date("2025-12-12T00:00:00"), endDate: new Date("2025-12-12T23:59:59") },
             { dateText: "15 ธ.ค. 68", title: "กกต. ประกาศให้มีการเลือกตั้ง", desc: "", startDate: new Date("2025-12-15T00:00:00"), endDate: new Date("2025-12-15T23:59:59") },
@@ -681,20 +681,16 @@
             const district = document.getElementById('districtSelect').value;
             const unitVal = document.getElementById('unitSelect').value;
             
-            if (!district) return; // Wait for district
-            if (!unitVal) return; // Wait for unit selection
+            if (!district) return; 
+            if (!unitVal) return;
 
             const unitNum = parseInt(unitVal);
 
             // ค้นหาใน Array with STRICT filtering
             const found = units.find(u => {
-                // เช็คแขวงแบบ STRICT
                 if (!u.details_range.startsWith(district + " ")) return false;
-
-                // เช็คเลขหน่วย
                 const part = u.details_range.split("หน่วยที่")[1];
                 if (!part) return false;
-                
                 const rangeStr = part.trim();
                 if (rangeStr.includes("-")) {
                     const [min, max] = rangeStr.split("-").map(n => parseInt(n));
@@ -708,6 +704,28 @@
             });
 
             if (found) {
+                // *** FIX: Force re-render markers for the searched district ***
+                // This ensures if user was filtering another district, we switch to this one.
+                renderMarkers(units.filter(u => u.details_range.startsWith(district + " ")));
+                
+                // Update Button UI to match the new district
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    // Check if button text matches district name (remove "แขวง" prefix for matching if needed, 
+                    // or match onclick attribute which is safer)
+                    if (b.getAttribute('onclick').includes(`'${district}'`)) {
+                        b.classList.add('active');
+                        const activeColor = subDistrictColors[district];
+                        b.style.backgroundColor = activeColor;
+                        b.style.borderColor = activeColor;
+                        b.style.color = (activeColor === "#ffc107") ? "#202020" : "white";
+                    } else {
+                        b.classList.remove('active');
+                        b.style.backgroundColor = 'white';
+                        b.style.color = '#555';
+                        b.style.borderColor = '#ddd';
+                    }
+                });
+
                 map.setView([found.lat, found.lng], 18);
                 openPopup(found);
             } else {
