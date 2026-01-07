@@ -4,15 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-W7Y2R6MGTQ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-W7Y2R6MGTQ');
-
-
 </script>
 <script src="config.js"></script>
 <script src="data.js"></script>
@@ -203,7 +194,7 @@
             display: flex; flex-direction: column; overflow-y: auto;
         }
         .info-popup-overlay.visible .info-card { transform: translateY(0); }
-        .close-btn-circle { position: absolute; top: 1.5rem; right: 1.5rem; background: #eee; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; cursor: pointer; }
+        .close-btn-circle { position: absolute; top: 0.5rem; right: 0.5rem; background: #eee; width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; cursor: pointer; z-index: 20; }
         .badge { display: inline-flex; align-items: center; justify-content: center; padding: 0.4rem 1rem; border-radius: 1.2rem; font-size: 1.3rem; font-weight: bold; margin-right: 0.5rem; }
         .badge-out { background: #FFE5D9; color: #D64545; }
         .badge-in { background: #E3F2FD; color: #1E88E5; }
@@ -348,10 +339,9 @@
         <div id="info-overlay" class="info-popup-overlay" onclick="closePopup(event)">
             <div class="info-card" onclick="event.stopPropagation()">
                 <div class="close-btn-circle" onclick="closePopupDirect()">✕</div>
-                <h2 id="p-name" style="font-size: 2rem; font-weight: 700; color: #333; line-height: 1.2;">-</h2>
+                <h2 id="p-name" style="font-size: 2rem; font-weight: 700; color: #333; line-height: 1.2; padding-right: 3.5rem;">-</h2>
                 <p id="p-sub" style="font-size: 1.6rem; color: #888; margin-top: 0.5rem;">-</p>
                 <div style="margin-top: 1rem;">
-                    <span id="p-type" class="badge"></span>
                     <span id="p-unit" style="font-size: 1.4rem; color: #555; background:#f5f5f5; padding: 0.3rem 1rem; border-radius: 1.5rem;"></span>
                 </div>
                 <div id="p-gallery" class="gallery-scroll"></div>
@@ -673,13 +663,8 @@
         function openPopup(data) {
             document.getElementById('p-name').innerText = data.name;
             document.getElementById('p-sub').innerText = data.details_range;
-            document.getElementById('p-unit').innerText = data.unit_count + " (" + (data.location_type.includes("ภายนอก") ? "Outdoor" : "Indoor") + ")";
+            document.getElementById('p-unit').innerText = data.unit_count;
             document.getElementById('p-note').innerText = data.note || "-";
-            
-            const typeBadge = document.getElementById('p-type');
-            const isOutdoor = data.location_type.includes("ภายนอก");
-            typeBadge.className = isOutdoor ? "badge badge-out" : "badge badge-in";
-            typeBadge.innerText = isOutdoor ? "ภายนอก" : "ภายใน";
             
             const gallery = document.getElementById('p-gallery');
             if(data.images && data.images.length > 0) {
