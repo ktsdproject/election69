@@ -340,7 +340,7 @@
         </nav>
 
         <div class="content-area">
-            <div id="view-timeline" class="tab-view left-panel-content active">
+            <div id="view-timeline" class="tab-view left-panel-content">
                 <div class="desktop-switcher">
                     <button class="desktop-toggle-btn active" onclick="switchDesktopPanel('timeline')">ปฏิทิน</button>
                     <button class="desktop-toggle-btn" onclick="switchDesktopPanel('guide')">คู่มือ</button>
@@ -348,7 +348,7 @@
                 <div class="scroll-wrapper">
                     <div class="mb-10 text-center">
                         <div class="inline-block px-4 py-1 mb-4 text-xl font-medium text-emerald-700 bg-emerald-100 rounded-full">การเลือกตั้งสมาชิกสภาผู้แทนราษฎรและการออกเสียงประชามติ</div>
-                        <h1 class="text-4xl font-bold text-slate-800 mb-2">กรุงเทพมหานคร<br>เขตเลือกตั้งที่ 4</h1>
+                        <h1 class="text-4xl font-bold text-slate-800 mb-2">กรุงเทพมหานาสร<br>เขตเลือกตั้งที่ 4</h1>
                         <h2 class="text-2xl font-medium text-slate-500">เขตคลองเตยและเขตวัฒนา</h2>
                     </div>
                     <div id="timeline-container"></div>
@@ -384,7 +384,7 @@
                 </div>
             </div>
 
-            <div id="view-map" class="tab-view">
+            <div id="view-map" class="tab-view active">
                 <div class="filter-container">
                     <div class="search-box">
                         <select id="districtSelect" class="search-dropdown" onchange="updateUnitDropdown()">
@@ -680,7 +680,13 @@
 
         window.addEventListener('load', () => { 
             checkResponsive(); 
-            setTimeout(() => { initTimeline(); initMap(); initDistrictData(); }, 100);
+            setTimeout(() => { 
+                initTimeline(); 
+                initMap(); 
+                initDistrictData();
+                // บรรทัดด้านล่างช่วยให้แผนที่แสดงผลสมบูรณ์ทันทีที่หน้าเว็บโหลดเสร็จในหน้าแรก
+                if (map) map.invalidateSize(); 
+            }, 100);
         });
         window.addEventListener('resize', checkResponsive);
     </script>
