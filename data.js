@@ -43,7 +43,7 @@ const units = [
             { id: 20, name: "โรงเรียนฝึกอาชีพ กทม.(คลองเตย)", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 44", location_type: "ภายในอาคาร", note: "บริเวณห้องประชุม", lat:13.710678477684933, lng:100.57648023571885, images: ["images/id20p01.jpg","images/id20p02.jpg"] },
             { id: 21, name: "เต็นท์ลานจอดรถโรงเรียนฝึกอาชีพ กทม.(คลองเตย)", unit_count: "2 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 45-46", location_type: "ภายนอกอาคาร", note: "โดมลานจอดรถ", lat:13.710574897934203, lng:100.57658215965519, images: ["images/id21p01.jpg"] },
             { id: 22, name: "โรงเรียนชุมชนหมู่บ้านพัฒนา", unit_count: "4 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 47-50", location_type: "ภายในอาคาร", note: "ใต้อาคาร และ โรงอาหาร", lat:13.711030645177567, lng:100.57509898879962, images: ["images/id22p01.jpg","images/id22p02.jpg"] },
-            { id: 23, name: "อาคารศูนย์ส่งเสริมการพัฒนาบุคคล", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 51", location_type: "ภายในอาคาร", note: "ใต้อาคารศูนย์", lat:13.710090407040097, lng:100.57593605588762, images: ["images/id23p01.jpg","images/id23p02.jpg"] },
+            { id: 23, name: "อาคารศูนย์ส่งเสริมการพัฒนาบุคคล", unit_count: "1 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 51", location_type: "ภายในอาคาร", note: "ใต้อาคารศูนย์", lat:13.710090407040097, lng:100.57593605588762, images: ["images/update.jpg","images/update.jpg"] },
             { id: 24, name: "เต็นท์บริเวณลานกีฬาศูนย์เยาวชนคลองเตย", unit_count: "3 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 52-54", location_type: "ภายนอกอาคาร", note: "ใต้โดม", lat:13.711102094868902, lng:100.56873489488662, images: ["images/id24p01.jpg","images/id24p02.jpg"] },
             { id: 25, name: "เต็นท์บริเวณลานกีฬา กทม. ชุมชนแฟลต 11-18", unit_count: "2 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 55-56", location_type: "ภายนอกอาคาร", note: "-", lat:13.710261651595443, lng:100.56921573401605, images: ["images/id25p01.jpg","images/id25p02.jpg"] },
             { id: 26, name: "เต็นท์บริเวณลานกีฬา กทม. ชุมชนพัฒนาชุมชนใหม่ แฟลต 19-22", unit_count: "2 หน่วย", details_range: "แขวงคลองเตย หน่วยที่ 57-58", location_type: "ภายนอกอาคาร", note: "ใต้โดม", lat:13.710735471457124, lng:100.5723329409751, images: ["images/id26p01.jpg","images/id26p02.jpg"] },
@@ -97,5 +97,6 @@ const units = [
             { id: 74, name: "โรงเรียนแสงหิรัญ", unit_count: "1 หน่วย", details_range: "แขวงพระโขนงเหนือ หน่วยที่ 27", location_type: "ภายในอาคาร", note: "-", lat:13.710356587962423, lng:100.59882504044789, images: ["images/update.jpg", "images/update.jpg"] },
             { id: 75, name: "วิทยาลัยอาชีวศึกษาเทคนิคบริหารธุรกิจกรุงเทพ", unit_count: "3 หน่วย", details_range: "แขวงพระโขนงเหนือ หน่วยที่ 28-30", location_type: "ภายในอาคาร", note: "-", lat:13.710577668070108, lng:100.59921462823324, images: ["images/update.jpg", "images/update.jpg"] }
         ];
+
 
 
