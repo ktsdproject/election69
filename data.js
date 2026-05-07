@@ -64,7 +64,6 @@ const units = [
             { id: 41, name: "โรงอาหารการประปานครหลวง สาขาพระโขนง", unit_count: "1 หน่วย", details_range: "แขวงพระโขนง หน่วยที่ 19", location_type: "ภายในอาคาร", note: "บริเวณโรงอาหาร", lat:13.707842940949103, lng:100.59935221590652, images: ["images/id41p01.jpg","images/id41p02.jpg"] },
             { id: 42, name: "บริเวณโรงจอดรถสถานีสูบน้ำพระโขนง", unit_count: "1 หน่วย", details_range: "แขวงพระโขนง หน่วยที่ 20", location_type: "ภายนอกอาคาร", note: "-", lat:13.70834107613073, lng:100.59489975846972, images: ["images/id42p01.jpg","images/id42p02.jpg"] },
             { id: 43, name: "เต็นท์บริเวณสวนเทิดพระเกียรติ 72 พรรษา บางจากฯ เติมสุขสู่สังคม", unit_count: "5 หน่วย", details_range: "แขวงพระโขนง หน่วยที่ 21-25", location_type: "ภายนอกอาคาร", note: "สวนเทิดพระเกียรติ 72 พรรษา (สุขุมวิท 50)", lat:13.703022148665783, lng:100.59047632016072, images: ["images/id43p01.jpg","images/id43p02.jpg"] },
-            { id: 44, name: "ใต้อาคารด้านหน้าธนาคารกรุงไทย สำนักงานใหญ่ ระหว่างสุขุมวิท 1-3", unit_count: "2 หน่วย", details_range: "แขวงคลองเตยเหนือ หน่วยที่ 1-2", location_type: "ภายนอกอาคาร", note: "-", lat:13.742640761288833, lng:100.55209032068514, images: ["images/update.jpg", "images/update.jpg"] },
 
         ];
 
