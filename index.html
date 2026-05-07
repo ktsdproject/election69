@@ -392,9 +392,6 @@
                             <option value="แขวงคลองเตย">คลองเตย</option>
                             <option value="แขวงคลองตัน">คลองตัน</option>
                             <option value="แขวงพระโขนง">พระโขนง</option>
-                            <option value="แขวงคลองเตยเหนือ">คลองเตยเหนือ</option>
-                            <option value="แขวงคลองตันเหนือ">คลองตันเหนือ</option>
-                            <option value="แขวงพระโขนงเหนือ">พระโขนงเหนือ</option>
                         </select>
                         <select id="unitSelect" class="search-dropdown" style="flex:0.7; border-left:1px solid #ddd;" onchange="searchUnit()">
                             <option value="">หน่วย...</option>
@@ -405,9 +402,6 @@
                         <button class="filter-btn" onclick="filterMap('แขวงคลองเตย', this)">คลองเตย</button>
                         <button class="filter-btn" onclick="filterMap('แขวงคลองตัน', this)">คลองตัน</button>
                         <button class="filter-btn" onclick="filterMap('แขวงพระโขนง', this)">พระโขนง</button>
-                        <button class="filter-btn" onclick="filterMap('แขวงคลองเตยเหนือ', this)">คลองเตยเหนือ</button>
-                        <button class="filter-btn" onclick="filterMap('แขวงคลองตันเหนือ', this)">คลองตันเหนือ</button>
-                        <button class="filter-btn" onclick="filterMap('แขวงพระโขนงเหนือ', this)">พระโขนงเหนือ</button>
                     </div>
                 </div>
                 <div id="map"></div>
@@ -684,7 +678,6 @@
                 initTimeline(); 
                 initMap(); 
                 initDistrictData();
-                // บรรทัดด้านล่างช่วยให้แผนที่แสดงผลสมบูรณ์ทันทีที่หน้าเว็บโหลดเสร็จในหน้าแรก
                 if (map) map.invalidateSize(); 
             }, 100);
         });
