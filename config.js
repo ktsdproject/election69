@@ -6,7 +6,7 @@ document.title = "กรุงเทพมหานคร เขตเลือ�
 
 const HEADER_CONFIG = {
     title: "กรุงเทพมหานคร<br>เขตเลือกตั้งที่ 4",
-    subtitle: "เขตคลองเตยและเขตวัฒนา"
+    subtitle: "เขตคลองเตย"
 };
 
 const subDistrictColors = {
