@@ -423,11 +423,6 @@
 
                     <div id="p-gallery" class="gallery-scroll mt-4"></div>
 
-                    <div class="mt-4 p-5 bg-amber-50 rounded-2xl border border-amber-100">
-                        <p class="text-lg font-bold text-amber-800 mb-1">⚠️ หมายเหตุ</p>
-                        <p id="p-note" class="text-lg text-slate-700 leading-relaxed">-</p>
-                    </div>
-                    
                     <a id="btn-navigate" href="#" target="_blank" 
                        class="mt-6 flex items-center justify-center gap-3 w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl text-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-transform no-underline">
                         📍 นำทางไปหน่วยเลือกตั้ง
@@ -436,20 +431,20 @@
                     <div class="mt-8 pt-6 border-t border-slate-100 pb-10">
                         <h3 class="text-2xl font-bold text-slate-800 mb-6">📄 ข้อมูลผู้สมัคร</h3>
                         <div class="grid grid-cols-1 gap-4">
-                            <div onclick="openPdfViewer('https://drive.google.com/file/d/1GPY7bU-Q6zKOZ5FkDiGERgSfSz48ch54/view?usp=sharing', 'สส.แบบแบ่งเขต')" 
+                            <div onclick="openPdfViewer('https://drive.google.com/file/d/1GPY7bU-Q6zKOZ5FkDiGERgSfSz48ch54/view?usp=sharing', 'สมาชิกสภากรุงเทพมหานคร (ส.ก.)')" 
                                class="modern-link-card group cursor-pointer">
                                 <div>
-                                    <span class="block text-2xl font-bold text-slate-800 group-hover:text-emerald-700">สส.แบบแบ่งเขต</span>
-                                    <span class="text-lg text-emerald-600 font-medium">● บัตรเลือกตั้งสีเขียว</span>
+                                    <span class="block text-2xl font-bold text-slate-800 group-hover:text-pink-600">สมาชิกสภากรุงเทพมหานคร (ส.ก.)</span>
+                                    <span class="text-lg text-pink-500 font-medium">● บัตรเลือกตั้งสีชมพู</span>
                                 </div>
                                 <span class="text-3xl text-slate-300">➜</span>
                             </div>
 
-                            <div onclick="openPdfViewer('https://drive.google.com/file/d/1yOD7Fwc0Ubff_fraNzg0PKOgfJGJQ_2o/view?usp=sharing', 'รายชื่อพรรคการเมือง')" 
+                            <div onclick="openPdfViewer('https://drive.google.com/file/d/1yOD7Fwc0Ubff_fraNzg0PKOgfJGJQ_2o/view?usp=sharing', 'ผู้ว่าราชการกรุงเทพมหานคร')" 
                                class="modern-link-card group cursor-pointer">
                                 <div>
-                                    <span class="block text-2xl font-bold text-slate-800 group-hover:text-pink-600">รายชื่อพรรคการเมือง</span>
-                                    <span class="text-lg text-pink-500 font-medium">● บัตรเลือกตั้งสีชมพู</span>
+                                    <span class="block text-2xl font-bold text-slate-800 group-hover:text-emerald-700">ผู้ว่าราชการกรุงเทพมหานคร</span>
+                                    <span class="text-lg text-emerald-600 font-medium">● บัตรเลือกตั้งสีเขียว</span>
                                 </div>
                                 <span class="text-3xl text-slate-300">➜</span>
                             </div>
@@ -662,9 +657,6 @@
             document.getElementById('p-sub').innerText = data.details_range;
             document.getElementById('p-unit').innerText = data.unit_count;
             
-            // หากไม่มีข้อมูล note ส่งมา ให้แสดงเป็นขีด "-"
-            document.getElementById('p-note').innerText = data.note || "-"; 
-
             const gs = document.getElementById('p-gallery');
             gs.innerHTML = ""; // ล้างรูปเก่า
 
