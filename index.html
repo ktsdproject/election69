@@ -207,10 +207,22 @@
             font-size: min(1.05vw, 4.5px); 
         }
 
-        /* ลายน้ำด้านหลัง (Background text) */
-        .box::before { content: "CANDIDATE"; position: absolute; top: 2em; left: 1.5em; font-size: 3em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; }
-        .box::after { content: "VOTE"; position: absolute; bottom: 2em; right: 2em; font-size: 4em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; }
-        .box:hover::after, .box:hover::before { opacity: 1; }
+        /* BANNER OVERLAY แทนที่ VOTE/CANDIDATE */
+        .box .card-banner {
+            display: none;
+        }
+        .box-maxi .card-banner {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            z-index: 50; /* อยู่หน้าสุด */
+            opacity: 1; /* ไม่จาง */
+            pointer-events: none;
+        }
         
         /* 1. จัดการ "เบอร์" ให้อยู่ด้านบน ไม่เลื่อนขึ้นลง */
         .box .number {
@@ -358,9 +370,10 @@
                     <div class="faq-container">
                         <details open><summary>1. ต้องเตรียมเอกสารอะไรบ้าง?</summary><div class="faq-answer">หลักฐานสำคัญที่สุดคือ <b>"บัตรประชาชน"</b> (หมดอายุก็ใช้ได้) หรือหลักฐานอื่นของทางราชการที่มีรูปถ่ายและเลขประจำตัวประชาชน เช่น ใบขับขี่, พาสปอร์ต, หรือแอปพลิเคชัน ThaID</div></details>
                     <details><summary>2. ตรวจสอบสิทธิเลือกตั้งที่ไหน?</summary><div class="faq-answer">สามารถตรวจสอบรายชื่อผู้มีสิทธิเลือกตั้งได้จากหนังสือแจ้งเจ้าบ้าน หรือผ่านเว็บไซต์ของกรมการปกครอง (Bora Portal) และแอปพลิเคชัน Smart Vote</div></details>
-                    <details><summary>3. คูหาเปิดกี่โมง?</summary><div class="faq-answer">คูหาเลือกตั้งเปิดให้ลงคะแนนตั้งแต่เวลา <b>08.00 น. ถึง 17.00 น.</b> โปรดวางแผนการเดินทางเพื่อไปใช้สิทธิได้ทันเวลา</div></details>
-                    <details><summary>4. กากบาทอย่างไรไม่ให้เป็นบัตรเสีย?</summary><div class="faq-answer">ทำเครื่องหมาย <b>"กากบาท (X)"</b> ลงในช่องทำเครื่องหมายเพียงเครื่องหมายเดียว ห้ามขีดเขียนข้อความอื่นหรือทำเครื่องหมายสัญลักษณ์อื่นใด</div></details>
-                    <details><summary>5. ข้อห้ามที่สำคัญในวันเลือกตั้ง</summary><div class="faq-answer">❌ ห้ามถ่ายรูปภายในคูหา หรือบัตรเลือกตั้ง<br>❌ ห้ามใส่เครื่องแต่งกายที่มีโลโก้พรรค หรือผู้สมัคร<br>❌ ห้ามแสดงบัตรเลือกตั้งให้ผู้อื่นเห็น<br>❌ ห้ามโฆษณา หาเสียง ให้ผู้สมัคร หรือพรรคการเมือง<br>❌ ห้ามกระทำการใด อันเป็นเหตุในการขัดขวางการปฏิบัติหน้าที่ของเจ้าพนักงาน หรือกระทบต่อการใช้สิทธิของผู้อื่น</div></details>
+                    <details><summary>3. ถ้าไม่ว่างวันจริงทำอย่างไร?</summary><div class="faq-answer">ท่านสามารถลงทะเบียน <b>"เลือกตั้งล่วงหน้า"</b> ได้ในช่วงวันที่ 20 ธ.ค. 68 - 5 ม.ค. 69 โดยสามารถยื่นคำขอต่อนายทะเบียนสำนักงานเขต หรือผ่านทางออนไลน์</div></details>
+                    <details><summary>4. คูหาเปิดกี่โมง?</summary><div class="faq-answer">คูหาเลือกตั้งเปิดให้ลงคะแนนตั้งแต่เวลา <b>08.00 น. ถึง 17.00 น.</b> โปรดวางแผนการเดินทางเพื่อไปใช้สิทธิได้ทันเวลา</div></details>
+                    <details><summary>5. กากบาทอย่างไรไม่ให้เป็นบัตรเสีย?</summary><div class="faq-answer">ทำเครื่องหมาย <b>"กากบาท (X)"</b> ลงในช่องทำเครื่องหมายเพียงเครื่องหมายเดียว ห้ามขีดเขียนข้อความอื่นหรือทำเครื่องหมายสัญลักษณ์อื่นใด</div></details>
+                    <details><summary>6. ข้อห้ามที่สำคัญในวันเลือกตั้ง</summary><div class="faq-answer">❌ ห้ามถ่ายรูปภายในคูหา หรือบัตรเลือกตั้ง<br>❌ ห้ามใส่เครื่องแต่งกายที่มีโลโก้พรรค หรือผู้สมัคร<br>❌ ห้ามแสดงบัตรเลือกตั้งให้ผู้อื่นเห็น<br>❌ ห้ามโฆษณา หาเสียง ให้ผู้สมัคร หรือพรรคการเมือง<br>❌ ห้ามกระทำการใด อันเป็นเหตุในการขัดขวางการปฏิบัติหน้าที่ของเจ้าพนักงาน หรือกระทบต่อการใช้สิทธิของผู้อื่น</div></details>
                 </div>
                     <button class="w-full py-4 mt-8 bg-slate-200 text-slate-600 rounded-2xl font-bold text-xl hover:bg-slate-300 lg:hidden" 
                         onclick="switchTab('map', document.querySelectorAll('.nav-tab')[1])">
@@ -437,14 +450,14 @@
                             </div>
 
                             <div class="grid grid-cols-2 gap-4 mt-2">
-                                <div onclick="openPdfViewer('https://drive.google.com/file/d/1V2niKLuzsSkagCj_VpEFIiVn4S4tEFcd/view?usp=sharing', 'ลักษณะบัตรดี-บัตรเสีย')" 
+                                <div onclick="openPdfViewer('https://drive.google.com/file/d/1-7tA1dxJxXs_hwgPaboB2Ui7sGXcsKjV/view?usp=sharing', 'สส.บัญชีรายชื่อ')" 
                                    class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center hover:bg-white hover:shadow-md transition-all cursor-pointer">
-                                    <span class="text-lg font-bold text-slate-600 block">ลักษณะบัตรดี-บัตรเสีย</span>
+                                    <span class="text-lg font-bold text-slate-600 block">สส.บัญชีรายชื่อ</span>
                                 </div>
                                 <div onclick="openPdfViewer('https://boraservices.bora.dopa.go.th/election/enqelection-local/', 'ตรวจสอบผู้มีสิทธิเลือกตั้ง')" 
-   class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center hover:bg-white hover:shadow-md transition-all cursor-pointer">
-    <span class="text-lg font-bold text-slate-600 block">ตรวจสอบผู้มีสิทธิเลือกตั้ง</span>
-</div>
+                                   class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center hover:bg-white hover:shadow-md transition-all cursor-pointer">
+                                    <span class="text-lg font-bold text-slate-600 block">ตรวจสอบผู้มีสิทธิเลือกตั้ง</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -471,6 +484,7 @@
             <div class="candidate-scroll-area">
                 <div class="candidate-container">
                     <div class="box blue card-fx" onclick="expandCardInLightbox(this)">
+                        <img class="card-banner" src="banner.png" alt="banner">
                         <h2 class="number">เบอร์ 1</h2>
                         <div class="circle"></div>
                         <img class="product" src="candidate/01.png" alt="Candidate 1" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
@@ -478,6 +492,7 @@
                     </div>
 
                     <div class="box orange card-fx" onclick="expandCardInLightbox(this)">
+                        <img class="card-banner" src="banner.png" alt="banner">
                         <h2 class="number">เบอร์ 2</h2>
                         <div class="circle"></div>
                         <img class="product" src="candidate/02.png" alt="Candidate 2" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
@@ -485,6 +500,7 @@
                     </div>
 
                     <div class="box yellow card-fx" onclick="expandCardInLightbox(this)">
+                        <img class="card-banner" src="banner.png" alt="banner">
                         <h2 class="number">เบอร์ 3</h2>
                         <div class="circle"></div>
                         <img class="product" src="candidate/03.png" alt="Candidate 3" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
@@ -524,7 +540,7 @@
         // GOVERNOR CANDIDATES (18 เบอร์)
         // ==========================================
         const govCandidates = [
-            "หม่อมหลวงกรกสิวัฒน์ เกษมศรี", "นายสมัย ละเลิศ", "นายพงษ์ศักดิ์ พัวพรพงษ์", 
+            "ม.ล.กรกสิวัฒน์ เกษมศรี", "นายสมัย ละเลิศ", "นายพงษ์ศักดิ์ พัวพรพงษ์", 
             "นายประทีป วัชรโชคเกษม", "นายอนุชา บูรพชัยศรี", "นายพิศาล กิตติเยาวมาลย์", 
             "นายภาสพงศ์ ไชยวิริญะวาณิชย์", "นายวีรพจน์ ลือประสิทธิ์สกุล", "นายชัชชาติ สิทธิพันธุ์", 
             "นายชัยวัฒน์ สถาวรวิจิตร", "นายประยูร ครองยศ", "พล.ต.ท.ชาญเทพ เสสะเวช", 
@@ -541,6 +557,7 @@
                 let numStr = String(num).padStart(2, '0');
                 container.innerHTML += `
                     <div class="box green card-fx" onclick="expandCardInLightbox(this)">
+                        <img class="card-banner" src="banner.png" alt="banner">
                         <h2 class="number">เบอร์ ${num}</h2>
                         <div class="circle"></div>
                         <img class="product" src="candidate2/${numStr}.png" alt="Candidate ${num}" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
@@ -799,7 +816,7 @@
             loadNextImage(); 
 
             // แก้ไขลิงก์ระบบนำทางของ Google Maps ให้ถูกต้อง
-            document.getElementById('btn-navigate').href = `https://maps.google.com/?q=${data.lat},${data.lng}`;
+            document.getElementById('btn-navigate').href = `https://www.google.com/maps/search/?api=1&query=${data.lat},${data.lng}`;
             document.getElementById('info-overlay').classList.add('visible');
         }
 
