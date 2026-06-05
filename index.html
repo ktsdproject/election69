@@ -186,86 +186,75 @@
 
 
         /* =========================================
-           CANDIDATE 3D CARDS (Grid Layout 3 Columns)
+           CANDIDATE 3D CARDS (Responsive & Non-blocking Text)
            ========================================= */
-        #candidate-viewer, #candidate2-viewer {
+        #candidate-viewer {
             --box-bg: #232323; --card-bg-text: rgba(255, 255, 255, 0.05);
         }
-        
         .candidate-scroll-area {
-            flex: 1; display: block; overflow-y: auto; overflow-x: hidden; padding: 2rem 1rem; width: 100%;
+            flex: 1; display: flex; justify-content: center; align-items: center; padding: 1rem; width: 100%;
         }
-        
-        /* เปลี่ยนจาก Flexbox เป็น Grid เพื่อบังคับ 3 คอลัมน์ */
         .candidate-container {
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); /* บังคับ 3 คอลัมน์ เท่าๆ กัน */
-            gap: 1rem; /* ระยะห่างระหว่างการ์ด */
-            width: 100%; max-width: 800px; margin: auto; padding: 0;
-            transform-style: preserve-3d;
+            position: relative; display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 600px; padding: 0; gap: 1vw; transform-style: preserve-3d;
         }
 
-        /* ปรับสัดส่วนการ์ดให้พอดีใน Grid */
         .box {
             position: relative; 
-            width: 100%; /* กว้างเต็ม Grid Cell */
-            aspect-ratio: 3/4; /* รักษาอัตราส่วน 300x400 */
-            border-radius: 1rem; transform-style: preserve-3d;
+            width: 30em; height: 40em; /* 1em = Responsive Scale */
+            border-radius: 2em; transform-style: preserve-3d; flex-shrink: 0;
             background-color: var(--box-bg); cursor: pointer;
-            
-            /* Responsive Font Size อิงตามความกว้างของการ์ด */
-            font-size: min(1.8vw, 8px); 
+            font-size: min(1.05vw, 4.5px); 
         }
 
-        /* ลายน้ำด้านหลัง */
-        .box::before { content: "CANDIDATE"; position: absolute; top: 1.5em; left: 1em; font-size: 2.5em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; pointer-events: none; }
-        .box::after { content: "VOTE"; position: absolute; bottom: 1.5em; right: 1.5em; font-size: 3em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; pointer-events: none; }
+        /* ลายน้ำด้านหลัง (Background text) */
+        .box::before { content: "CANDIDATE"; position: absolute; top: 2em; left: 1.5em; font-size: 3em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; }
+        .box::after { content: "VOTE"; position: absolute; bottom: 2em; right: 2em; font-size: 4em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; }
         .box:hover::after, .box:hover::before { opacity: 1; }
         
-        /* จัดการ "เบอร์" ให้อยู่ด้านบน */
+        /* 1. จัดการ "เบอร์" ให้อยู่ด้านบน ไม่เลื่อนขึ้นลง */
         .box .number {
             position: absolute; top: 1.5em; left: 0; width: 100%; 
-            text-align: center; color: #ffffff; 
+            text-align: center; color: #ffffff; /* สีขาว */
             font-family: 'Prompt', sans-serif; font-weight: 700; font-size: 3em; margin: 0;
-            transform-style: preserve-3d; transform: translate3d(0, 0, 0px); /* เริ่มต้นแบนราบ */
-            transition: 0.5s; z-index: 5; /* อยู่หลังรูป */
-            text-shadow: 0 4px 10px rgba(0,0,0,0.4); pointer-events: none;
+            transform-style: preserve-3d; transform: translate3d(0, 0, 7.5em);
+            transition: 0.5s; z-index: 12; text-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
         
-        /* จัดการ "ชื่อ" ให้อยู่ด้านล่าง */
+        /* 2. จัดการ "ชื่อ" ให้อยู่ด้านล่าง ไม่เลื่อนขึ้นลง */
         .box .name {
             position: absolute; bottom: 1.5em; left: 0; width: 100%; 
-            text-align: center; color: #ffffff; 
+            text-align: center; color: #ffffff; /* สีขาว */
             font-family: 'Prompt', sans-serif; font-weight: 500; font-size: 1.8em; margin: 0;
-            padding: 0 1em; box-sizing: border-box; 
-            transform-style: preserve-3d; transform: translate3d(0, 0, 0px); /* เริ่มต้นแบนราบ */
-            transition: 0.5s; z-index: 5; /* อยู่หลังรูป */
-            text-shadow: 0 4px 10px rgba(0,0,0,0.4); pointer-events: none;
+            padding: 0 1em; box-sizing: border-box; /* ป้องกันการล้นขอบ */
+            transform-style: preserve-3d; transform: translate3d(0, 0, 7.5em);
+            transition: 0.5s; z-index: 12; text-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
         
-        /* วงกลม Effect */
-        .box .circle { position: absolute; top: 50%; left: 50%; width: 60%; height: 60%; aspect-ratio: 1; border-radius: 50%; transition: 0.5s; background: #ffffff; transform-style: preserve-3d; z-index: 4; opacity: 1; transform: translate3d(-50%, -50%, 0px); pointer-events: none; }
+        /* วงกลม Effect พื้นหลังรูป */
+        .box .circle { position: absolute; top: 50%; left: 50%; width: 20em; height: 20em; border-radius: 50%; transition: 0.5s; background: #ffffff; transform-style: preserve-3d; z-index: 10; opacity: 1; transform: translate3d(-50%, -50%, 0px); }
+        .box:hover .circle { transform: translate3d(-50%, -50%, 3.5em); }
         
         /* รูปผู้สมัคร */
         .box .product { 
             position: absolute; top: 50%; left: 50%; 
-            max-width: 90%; max-height: 70%; /* ให้มีพื้นที่ว่างให้ชื่อและเบอร์ */
-            object-fit: contain; transition: 0.5s; z-index: 10; transform-style: preserve-3d; 
-            transform: translate3d(-50%, -50%, 0px); border-radius: 0.5rem; pointer-events: none;
+            max-width: 26em; max-height: 24em; /* บีบขนาดความสูงลงนิดหน่อยเพื่อไม่ให้บังหนังสือ */
+            object-fit: contain; transition: 0.5s; z-index: 11; transform-style: preserve-3d; 
+            transform: translate3d(-50%, -50%, 0px); border-radius: 1em; 
         }
 
-        /* Hover Effect - รูปและวงกลมเด้งออกมาบังข้อความนิดหน่อย ทำให้ดูมีมิติ และข้อความไม่บังหน้า */
-        .box:hover .product { transform: translate3d(-50%, -50%, 8em); }
-        .box:hover .circle { transform: translate3d(-50%, -50%, 3em); }
-        .box:hover .number { transform: translate3d(0, 0, 1em); }
-        .box:hover .name { transform: translate3d(0, 0, 1em); }
+        /* Hover Effect - เด้งออกมาด้านหน้า (Z-axis) อย่างเดียว */
+        .box:hover .product { transform: translate3d(-50%, -50%, 10em); }
+        .box:hover .number { transform: translate3d(0, 0, 12em); }
+        .box:hover .name { transform: translate3d(0, 0, 12em); }
 
-        .box .buy { display: none; } /* ซ่อนปุ่ม แตะเพื่อขยาย */
+        /* ซ่อนปุ่ม แตะเพื่อขยาย (ทำให้คลิกได้ทั้งการ์ดเลยสะอาดกว่า) */
+        .box .buy { display: none; }
 
         /* 3D Borders */
-        .box.card-fx::before { position: absolute; content: ""; top: 0; left:0; width: 100%; height: 100%; border-radius: inherit; z-index: -1; border: 0.155rem solid transparent; -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; mask-composite: exclude; font-size: unset; font-weight: unset; color: unset; font-style: unset; }
+        .box.card-fx::before { position: absolute; content: ""; top: 0; left:0; width: 100%; height: 100%; border-radius: 2.25em; z-index: -1; border: 0.155em solid transparent; -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; mask-composite: exclude; font-size: unset; font-weight: unset; color: unset; font-style: unset; }
         
-        /* สีประจำเบอร์ ส.ก. */
+        /* สีประจำเบอร์ */
         .box.blue { background: radial-gradient(ellipse at right top, #1da3c3ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
         .box.blue.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #1da3c3) border-box; }
         .box.blue .circle { background: #1da3c3; }
@@ -278,14 +267,9 @@
         .box.yellow.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #eab308) border-box; }
         .box.yellow .circle { background: #eab308; }
 
-        /* สีพิเศษสำหรับผู้ว่าฯ (สีเขียวแบบ กทม.) */
-        .box.green { background: radial-gradient(ellipse at right top, #10b981ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
-        .box.green.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #10b981) border-box; }
-        .box.green .circle { background: #10b981; }
-
 
         /* =========================================
-           CARD EXPAND LIGHTBOX
+           CARD EXPAND LIGHTBOX (เฉพาะตอนขยายการ์ดหน้าเดี่ยว)
            ========================================= */
         #card-expanded-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 4000;
@@ -294,11 +278,41 @@
         }
         #card-expanded-overlay.active { opacity: 1; visibility: visible; }
         
-        /* สั่งให้การ์ดที่ขยายใหญ่ขึ้น 3-4 เท่า */
+        /* สั่งให้การ์ดในสถานะขยาย มีขนาดใหญ่ขึ้น */
         .box-maxi {
-            font-size: min(4vw, 16px) !important; /* Base Font ใหญ่ขึ้น การ์ดจะขยายตาม */
-            width: 30em !important; height: 40em !important;
+            font-size: min(2.5vw, 9px) !important; /* ขยายการ์ดให้ใหญ่ขึ้น 2-3 เท่า */
             margin: auto; cursor: default;
+        }
+
+        /* =========================================
+           CANDIDATE 2 (ผู้ว่าฯ) - 6 แถว 3 คอลัมน์ (ใช้ rem)
+           ========================================= */
+        #candidate2-viewer {
+            --box-bg: #232323; --card-bg-text: rgba(255, 255, 255, 0.05);
+        }
+        .candidate2-scroll-area {
+            flex: 1; overflow-y: auto; overflow-x: hidden; padding: 2rem 1rem; width: 100%;
+        }
+        .candidate2-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; /* ใช้ rem กำหนดระยะห่างตามสั่ง */
+            width: 100%; max-width: 60rem; margin: auto;
+            justify-items: center;
+        }
+        .candidate2-container .box {
+            font-size: 0.5rem; /* ใช้ rem กำหนดขนาด box พื้นฐานให้อยู่ใน 3 คอลัมน์ได้ */
+            margin: 0; /* ล้าง margin ของเดิม */
+        }
+        /* สีเขียวสำหรับผู้ว่าฯ โดยเฉพาะ */
+        .box.green { background: radial-gradient(ellipse at right top, #10b981ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
+        .box.green.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #10b981) border-box; }
+        .box.green .circle { background: #10b981; }
+
+        /* ย่อขนาดในมือถือให้ยังคง 3 คอลัมน์โดยไม่ล้นจอ */
+        @media (max-width: 768px) {
+            .candidate2-container { gap: 0.5rem; }
+            .candidate2-container .box { font-size: 0.35rem; }
         }
 
     </style>
@@ -486,9 +500,8 @@
                 <span class="pdf-title text-emerald-400">ผู้สมัคร ผู้ว่าฯ กทม.</span>
                 <div class="close-btn-master" onclick="closeCandidate2Viewer()">✕</div>
             </div>
-            
-            <div class="candidate-scroll-area">
-                <div class="candidate-container" id="gov-candidate-list">
+            <div class="candidate2-scroll-area">
+                <div class="candidate2-container" id="gov-candidate-list">
                     </div>
             </div>
         </div>
@@ -508,39 +521,35 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
-        // ข้อมูลผู้สมัครผู้ว่าราชการ กทม. 18 คน
+        // ==========================================
+        // GOVERNOR CANDIDATES (18 เบอร์)
+        // ==========================================
         const govCandidates = [
-            "ม.ล.กรกสิวัฒน์ เกษมศรี", "สมัย ละเลิศ", "พงษ์ศักดิ์ พัวพรพงษ์", 
-            "ประทีป วัชรโชคเกษม", "อนุชา บูรพชัยศรี", "พิศาล กิตติเยาวมาลย์", 
-            "ภาสพงศ์ ไชยวิริญะวาณิชย์", "วีรพจน์ ลือประสิทธิ์สกุล", "ชัชชาติ สิทธิพันธุ์", 
-            "ชัยวัฒน์ สถาวรวิจิตร", "ประยูร ครองยศ", "พล.ต.ท.ชาญเทพ เสสะเวช", 
-            "คมสัน พันธุ์วิชาติกุล", "มัลลิกา บุญมีตระกูล มหาสุข", "โอฬาร ตั้งตราตระกูล", 
-            "ศรีรัฏน์ ช่างเพ็ชร์", "ลลนา มงคลหัสดินทร์", "สมชัย เจริญวรเกียรติ"
+            "ม.ล.กรกสิวัฒน์ เกษมศรี", "นายสมัย ละเลิศ", "นายพงษ์ศักดิ์ พัวพรพงษ์", 
+            "นายประทีป วัชรโชคเกษม", "นายอนุชา บูรพชัยศรี", "นายพิศาล กิตติเยาวมาลย์", 
+            "นายภาสพงศ์ ไชยวิริญะวาณิชย์", "นายวีรพจน์ ลือประสิทธิ์สกุล", "นายชัชชาติ สิทธิพันธุ์", 
+            "นายชัยวัฒน์ สถาวรวิจิตร", "นายประยูร ครองยศ", "พล.ต.ท.ชาญเทพ เสสะเวช", 
+            "นายคมสัน พันธุ์วิชาติกุล", "นางมัลลิกา บุญมีตระกูล มหาสุข", "นาย โอฬาร ตั้งตราตระกูล", 
+            "นางสาว ศรีรัฏน์ ช่างเพ็ชร์", "นางสาว ลลนา  มงคลหัสดินทร์", "นาย สมชัย  เจริญวรเกียรติ"
         ];
 
-        // สร้างการ์ดผู้สมัครผู้ว่าฯ 18 คน อัตโนมัติลงใน Grid
-        function generateGovCandidates() {
+        function initGovCandidates() {
             const container = document.getElementById('gov-candidate-list');
+            if(!container) return;
             container.innerHTML = "";
-            
             govCandidates.forEach((name, index) => {
                 let num = index + 1;
-                let numStr = String(num).padStart(2, '0'); // สร้าง 01, 02, 03...
-                
-                let cardHTML = `
+                let numStr = String(num).padStart(2, '0');
+                container.innerHTML += `
                     <div class="box green card-fx" onclick="expandCardInLightbox(this)">
                         <h2 class="number">เบอร์ ${num}</h2>
                         <div class="circle"></div>
                         <img class="product" src="candidate2/${numStr}.png" alt="Candidate ${num}" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
-                        <h3 class="name" style="font-size: 1.5em;">${name}</h3>
+                        <h3 class="name">${name}</h3>
                     </div>
                 `;
-                container.innerHTML += cardHTML;
             });
         }
-        
-        // เรียกใช้ฟังก์ชันตอนโหลดหน้าเว็บ
-        document.addEventListener("DOMContentLoaded", generateGovCandidates);
 
         // ==========================================
         //  APP LOGIC
@@ -564,26 +573,28 @@
         }
 
         // ==========================================
-        // CANDIDATE VIEWER LOGIC
+        // CANDIDATE VIEWER LOGIC (NEW)
         // ==========================================
-        // เปิดหน้า ส.ก.
         function openCandidateViewer() {
             document.getElementById('candidate-viewer').classList.add('active');
+            
+            // เปิดเอฟเฟกต์ 3D ให้กับการ์ดใบเล็กทั้ง 3 ใบ
             VanillaTilt.init(document.querySelectorAll("#candidate-viewer .box"), {
                 max: 15, speed: 300, easing: "cubic-bezier(.03,.98,.52,.99)", scale: 1.05
             });
         }
+        
         function closeCandidateViewer() {
             document.getElementById('candidate-viewer').classList.remove('active');
         }
 
-        // เปิดหน้า ผู้ว่าฯ (18 คน)
         function openCandidate2Viewer() {
             document.getElementById('candidate2-viewer').classList.add('active');
             VanillaTilt.init(document.querySelectorAll("#candidate2-viewer .box"), {
                 max: 15, speed: 300, easing: "cubic-bezier(.03,.98,.52,.99)", scale: 1.05
             });
         }
+        
         function closeCandidate2Viewer() {
             document.getElementById('candidate2-viewer').classList.remove('active');
         }
@@ -591,12 +602,15 @@
         // ฟังก์ชันเมื่อผู้ใช้ "คลิกเพื่อขยาย" การ์ด 3D ทั้งใบ
         function expandCardInLightbox(element) {
             const container = document.getElementById('card-expanded-content');
+            
+            // ก๊อปปี้โค้ด HTML ของการ์ดใบที่กด
             container.innerHTML = element.outerHTML; 
             
             const clonedCard = container.querySelector('.box');
-            clonedCard.classList.add('box-maxi'); 
-            clonedCard.removeAttribute('onclick'); 
+            clonedCard.classList.add('box-maxi'); // สั่งให้ขยายขนาด
+            clonedCard.removeAttribute('onclick'); // ป้องกันการกดซ้อนกัน
             
+            // ฝังเอฟเฟกต์ 3D ให้กับการ์ดใบใหญ่
             VanillaTilt.init(clonedCard, {
                 max: 15, speed: 300, easing: "cubic-bezier(.03,.98,.52,.99)", scale: 1.05
             });
@@ -786,7 +800,7 @@
             loadNextImage(); 
 
             // แก้ไขลิงก์ระบบนำทางของ Google Maps ให้ถูกต้อง
-            document.getElementById('btn-navigate').href = `https://www.google.com/maps/search/?api=1&query=${data.lat},${data.lng}`;
+            document.getElementById('btn-navigate').href = `https://maps.google.com/?q=${data.lat},${data.lng}`;
             document.getElementById('info-overlay').classList.add('visible');
         }
 
@@ -801,6 +815,7 @@
 
         window.addEventListener('load', () => { 
             checkResponsive(); 
+            initGovCandidates(); // เรียกใช้งานการสร้างรายชื่อแคนดิเดตผู้ว่าฯ
             setTimeout(() => { 
                 initTimeline(); 
                 initMap(); 
