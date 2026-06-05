@@ -186,10 +186,10 @@
 
 
         /* =========================================
-           CANDIDATE 3D CARDS (Responsive & Expandable)
+           CANDIDATE 3D CARDS (Responsive & Non-blocking Text)
            ========================================= */
         #candidate-viewer {
-            --box-bg: #232323; --name-color: #f8f8f8; --card-bg-text: rgba(255, 255, 255, 0.05);
+            --box-bg: #232323; --card-bg-text: rgba(255, 255, 255, 0.05);
         }
         .candidate-scroll-area {
             flex: 1; display: flex; justify-content: center; align-items: center; padding: 1rem; width: 100%;
@@ -199,66 +199,77 @@
             width: 100%; max-width: 600px; padding: 0; gap: 1vw; transform-style: preserve-3d;
         }
 
-        /* การใช้ระบบ "em" เป็นหน่วยหลัก ทำให้การ์ดย่อ-ขยายตัวเองได้แบบ 100% 
-           โดยรักษา 3D Effect เอาไว้ เพียงแค่เราปรับค่า font-size ตัวเดียว
-        */
         .box {
             position: relative; 
-            width: 30em; height: 40em; /* สัดส่วน 300x400 เมื่อ 1em = 10px */
+            width: 30em; height: 40em; /* 1em = Responsive Scale */
             border-radius: 2em; transform-style: preserve-3d; flex-shrink: 0;
             background-color: var(--box-bg); cursor: pointer;
-            
-            /* Responsive Scaling: ปรับขนาดการ์ดเพื่อให้ 3 ใบเรียงพอดีจอโทรศัพท์ */
             font-size: min(1.05vw, 4.5px); 
         }
 
+        /* ลายน้ำด้านหลัง (Background text) */
         .box::before { content: "CANDIDATE"; position: absolute; top: 2em; left: 1.5em; font-size: 3em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; }
         .box::after { content: "VOTE"; position: absolute; bottom: 2em; right: 2em; font-size: 4em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; }
         .box:hover::after, .box:hover::before { opacity: 1; }
         
+        /* 1. จัดการ "เบอร์" ให้อยู่ด้านบน ไม่เลื่อนขึ้นลง */
+        .box .number {
+            position: absolute; top: 1.5em; left: 0; width: 100%; 
+            text-align: center; color: #ffffff; /* สีขาว */
+            font-family: 'Prompt', sans-serif; font-weight: 700; font-size: 3em; margin: 0;
+            transform-style: preserve-3d; transform: translate3d(0, 0, 7.5em);
+            transition: 0.5s; z-index: 12; text-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+        
+        /* 2. จัดการ "ชื่อ" ให้อยู่ด้านล่าง ไม่เลื่อนขึ้นลง */
         .box .name {
-            position: absolute; top: 0; left: 0; text-align: center; color: var(--name-color);
-            width: 100%; transform-style: preserve-3d; transform: translate3d(0, 0, 7.5em);
-            transition: 0.5s; opacity: 0; z-index: 10; font-family: 'Prompt', sans-serif; font-weight: 700;
-            font-size: 2.5em; line-height: 1.2; margin-top: 1em;
+            position: absolute; bottom: 1.5em; left: 0; width: 100%; 
+            text-align: center; color: #ffffff; /* สีขาว */
+            font-family: 'Prompt', sans-serif; font-weight: 500; font-size: 1.8em; margin: 0;
+            padding: 0 1em; box-sizing: border-box; /* ป้องกันการล้นขอบ */
+            transform-style: preserve-3d; transform: translate3d(0, 0, 7.5em);
+            transition: 0.5s; z-index: 12; text-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
-        .box:hover .name { top: 3em; opacity: 1; }
         
-        .box .buy {
-            position: absolute; bottom: 0; left: 50%; transform-style: preserve-3d;
-            transform: translate3d(-50%, 0, 7.5em); color: #fff; background: #333;
-            padding: 1em 2.5em; border-radius: 3em; border: none; pointer-events: none;
-            transition: 0.5s; opacity: 0; z-index: 10; font-family: 'Prompt', sans-serif; font-size: 1.4em; white-space: nowrap;
-        }
-        .box:hover .buy { bottom: 3em; opacity: 1; }
-        
+        /* วงกลม Effect พื้นหลังรูป */
         .box .circle { position: absolute; top: 50%; left: 50%; width: 20em; height: 20em; border-radius: 50%; transition: 0.5s; background: #ffffff; transform-style: preserve-3d; z-index: 10; opacity: 1; transform: translate3d(-50%, -50%, 0px); }
         .box:hover .circle { transform: translate3d(-50%, -50%, 3.5em); }
         
-        .box .product { position: absolute; top: 50%; left: 50%; max-width: 25em; max-height: 28em; object-fit: contain; transition: 0.5s; z-index: 11; transform-style: preserve-3d; transform: translate3d(-50%, -50%, 0px); border-radius: 1em; }
+        /* รูปผู้สมัคร */
+        .box .product { 
+            position: absolute; top: 50%; left: 50%; 
+            max-width: 26em; max-height: 24em; /* บีบขนาดความสูงลงนิดหน่อยเพื่อไม่ให้บังหนังสือ */
+            object-fit: contain; transition: 0.5s; z-index: 11; transform-style: preserve-3d; 
+            transform: translate3d(-50%, -50%, 0px); border-radius: 1em; 
+        }
+
+        /* Hover Effect - เด้งออกมาด้านหน้า (Z-axis) อย่างเดียว */
         .box:hover .product { transform: translate3d(-50%, -50%, 10em); }
+        .box:hover .number { transform: translate3d(0, 0, 12em); }
+        .box:hover .name { transform: translate3d(0, 0, 12em); }
+
+        /* ซ่อนปุ่ม แตะเพื่อขยาย (ทำให้คลิกได้ทั้งการ์ดเลยสะอาดกว่า) */
+        .box .buy { display: none; }
 
         /* 3D Borders */
         .box.card-fx::before { position: absolute; content: ""; top: 0; left:0; width: 100%; height: 100%; border-radius: 2.25em; z-index: -1; border: 0.155em solid transparent; -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; mask-composite: exclude; font-size: unset; font-weight: unset; color: unset; font-style: unset; }
         
-        /* 1. สีฟ้า (Blue) */
+        /* สีประจำเบอร์ */
         .box.blue { background: radial-gradient(ellipse at right top, #1da3c3ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
         .box.blue.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #1da3c3) border-box; }
-        .box.blue .circle, .box.blue .buy { background: #1da3c3; }
+        .box.blue .circle { background: #1da3c3; }
 
-        /* 2. สีส้ม (Orange) */
         .box.orange { background: radial-gradient(ellipse at right top, #f97316ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
         .box.orange.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #f97316) border-box; }
-        .box.orange .circle, .box.orange .buy { background: #f97316; }
+        .box.orange .circle { background: #f97316; }
 
-        /* 3. สีเหลือง (Yellow) */
         .box.yellow { background: radial-gradient(ellipse at right top, #eab308ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
         .box.yellow.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #eab308) border-box; }
-        .box.yellow .circle, .box.yellow .buy { background: #eab308; }
+        .box.yellow .circle { background: #eab308; }
 
 
         /* =========================================
-           CARD EXPAND LIGHTBOX (เฉพาะตอนขยายการ์ด)
+           CARD EXPAND LIGHTBOX (เฉพาะตอนขยายการ์ดหน้าเดี่ยว)
            ========================================= */
         #card-expanded-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 4000;
@@ -267,13 +278,11 @@
         }
         #card-expanded-overlay.active { opacity: 1; visibility: visible; }
         
-        /* สั่งให้การ์ดในสถานะขยาย มีขนาดใหญ่ขึ้นด้วยการปรับ Base Font Size */
+        /* สั่งให้การ์ดในสถานะขยาย มีขนาดใหญ่ขึ้น */
         .box-maxi {
             font-size: min(2.5vw, 9px) !important; /* ขยายการ์ดให้ใหญ่ขึ้น 2-3 เท่า */
             margin: auto; cursor: default;
         }
-        /* ซ่อนปุ่ม 'แตะเพื่อขยาย' ออกจากการ์ดที่ขยายแล้ว */
-        .box-maxi .buy { display: none !important; }
 
     </style>
 </head>
@@ -433,24 +442,24 @@
                 <div class="candidate-container">
                     
                     <div class="box blue card-fx" onclick="expandCardInLightbox(this)">
-                        <h2 class="name">เบอร์ 1<br><span style="font-size:0.5em; font-weight:normal;">สุชัย พงษ์เพียรชอบ</span></h2>
-                        <button class="buy">🔍 แตะเพื่อขยาย</button>
+                        <h2 class="number">เบอร์ 1</h2>
                         <div class="circle"></div>
                         <img class="product" src="candidate/01.png" alt="Candidate 1" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
+                        <h3 class="name">สุชัย พงษ์เพียรชอบ</h3>
                     </div>
 
                     <div class="box orange card-fx" onclick="expandCardInLightbox(this)">
-                        <h2 class="name">เบอร์ 2<br><span style="font-size:0.5em; font-weight:normal;">พลอย เตลาน</span></h2>
-                        <button class="buy">🔍 แตะเพื่อขยาย</button>
+                        <h2 class="number">เบอร์ 2</h2>
                         <div class="circle"></div>
                         <img class="product" src="candidate/02.png" alt="Candidate 2" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
+                        <h3 class="name">พลอย เตลาน</h3>
                     </div>
 
                     <div class="box yellow card-fx" onclick="expandCardInLightbox(this)">
-                        <h2 class="name">เบอร์ 3<br><span style="font-size:0.5em; font-weight:normal;">ศวนงชภรณ์ เงินดี</span></h2>
-                        <button class="buy">🔍 แตะเพื่อขยาย</button>
+                        <h2 class="number">เบอร์ 3</h2>
                         <div class="circle"></div>
                         <img class="product" src="candidate/03.png" alt="Candidate 3" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
+                        <h3 class="name">ศวนงชภรณ์ เงินดี</h3>
                     </div>
 
                 </div>
@@ -709,8 +718,8 @@
             
             loadNextImage(); 
 
-            // แก้ไขบั๊กลิงก์ระบบนำทางของ Google Maps ให้ถูกต้อง
-            document.getElementById('btn-navigate').href = `https://www.google.com/maps/search/?api=1&query=${data.lat},${data.lng}`;
+            // แก้ไขลิงก์ระบบนำทางของ Google Maps ให้ถูกต้อง
+            document.getElementById('btn-navigate').href = `https://maps.google.com/?q=${data.lat},${data.lng}`;
             document.getElementById('info-overlay').classList.add('visible');
         }
 
