@@ -15,6 +15,8 @@
     <script src="config.js"></script>
     <script src="data.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+
     <title>กรุงเทพมหานคร เขตคลองเตย</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -55,12 +57,10 @@
         }
         h1, h2, h3, .nav-tab, .badge, .filter-btn, .desktop-toggle-btn { font-family: 'Prompt', sans-serif; }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         
-        /* Glass Effect */
         .glass {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -71,45 +71,26 @@
         /* =========================================
            BUTTONS & UI ELEMENTS
            ========================================= */
-        /* ปุ่มปิดแบบชัดเจน (Big Red Button) */
         .close-btn-master {
-            width: 4.5rem; height: 4.5rem;
-            background-color: #ef4444; /* Red-500 */
-            color: white;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.4rem;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
-            cursor: pointer;
-            border: 2px solid white;
-            transition: transform 0.2s, background-color 0.2s;
-            z-index: 50;
+            width: 4.5rem; height: 4.5rem; background-color: #ef4444; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2.4rem; font-weight: bold; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
+            cursor: pointer; border: 2px solid white; transition: transform 0.2s, background-color 0.2s; z-index: 50;
         }
         .close-btn-master:active { transform: scale(0.9); background-color: #dc2626; }
 
-        /* Layout Structure */
         .game-frame {
-            position: relative; background-color: #f1f5f9;
-            width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden;
+            position: relative; background-color: #f1f5f9; width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden;
         }
         
-        /* Nav Tab */
         .top-nav {
-            flex-shrink: 0; padding: 1rem 1.5rem;
-            display: flex; gap: 1rem; z-index: 100;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0; padding: 1rem 1.5rem; display: flex; gap: 1rem; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         .nav-tab {
-            flex: 1; border: none; background: transparent;
-            font-size: 1.6rem; font-weight: 600; color: #64748b;
-            cursor: pointer; padding: 1rem; border-radius: 1.2rem;
-            transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            flex: 1; border: none; background: transparent; font-size: 1.6rem; font-weight: 600; color: #64748b;
+            cursor: pointer; padding: 1rem; border-radius: 1.2rem; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
         }
-        .nav-tab.active { 
-            background: #ecfdf5; color: #047857; 
-            box-shadow: inset 0 0 0 1px #a7f3d0;
-        }
+        .nav-tab.active { background: #ecfdf5; color: #047857; box-shadow: inset 0 0 0 1px #a7f3d0; }
 
         .content-area { flex: 1; position: relative; overflow: hidden; display: flex; width: 100%; }
         .tab-view { width: 100%; height: 100%; display: none; flex-direction: column; }
@@ -119,214 +100,180 @@
 
         /* Timeline */
         .timeline-item { display: flex; gap: 2rem; position: relative; padding-bottom: 3.5rem; }
-        .timeline-item::before {
-            content: ''; position: absolute; left: 1.9rem; top: 4rem; bottom: 0; width: 2px; 
-            background: #e2e8f0; border-radius: 2px;
-        }
+        .timeline-item::before { content: ''; position: absolute; left: 1.9rem; top: 4rem; bottom: 0; width: 2px; background: #e2e8f0; border-radius: 2px; }
         .timeline-item:last-child::before { display: none; }
-        .t-circle {
-            width: 4rem; height: 4rem; border-radius: 50%; flex-shrink: 0; z-index: 1;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 1.8rem; color: white; border: 4px solid #f1f5f9;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); font-family: 'Prompt';
-        }
-        .t-status-done .t-circle { background: #10b981; } 
-        .t-status-active .t-circle { background: #f59e0b; } 
-        .t-status-future .t-circle { background: #cbd5e1; color: #94a3b8; }
-        .t-content {
-            background: white; padding: 1.5rem; border-radius: 1.5rem; width: 100%;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
-        }
+        .t-circle { width: 4rem; height: 4rem; border-radius: 50%; flex-shrink: 0; z-index: 1; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; color: white; border: 4px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); font-family: 'Prompt'; }
+        .t-status-done .t-circle { background: #10b981; } .t-status-active .t-circle { background: #f59e0b; } .t-status-future .t-circle { background: #cbd5e1; color: #94a3b8; }
+        .t-content { background: white; padding: 1.5rem; border-radius: 1.5rem; width: 100%; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
         .t-content h3 { font-size: 1.8rem; font-weight: 600; margin: 0; color: #1e293b; }
-        .t-content .t-date { 
-            display: inline-block; font-size: 1.3rem; font-weight: 600; 
-            color: #047857; background: #ecfdf5; padding: 0.2rem 0.8rem; 
-            border-radius: 0.6rem; margin-bottom: 0.5rem;
-        }
+        .t-content .t-date { display: inline-block; font-size: 1.3rem; font-weight: 600; color: #047857; background: #ecfdf5; padding: 0.2rem 0.8rem; border-radius: 0.6rem; margin-bottom: 0.5rem; }
 
         /* FAQ */
         .faq-container { display: flex; flex-direction: column; gap: 1.5rem; padding-bottom: 4rem; }
-        details { 
-            border: 1px solid #e2e8f0; border-radius: 1.2rem; overflow: hidden; background: #fff; 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.3s ease;
-        }
+        details { border: 1px solid #e2e8f0; border-radius: 1.2rem; overflow: hidden; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.3s ease; }
         details[open] { border-color: #10b981; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1); }
-        summary {
-            padding: 1.8rem; cursor: pointer; font-weight: 600; font-size: 1.6rem; color: #334155;
-            list-style: none; display: flex; justify-content: space-between; align-items: center;
-        }
+        summary { padding: 1.8rem; cursor: pointer; font-weight: 600; font-size: 1.6rem; color: #334155; list-style: none; display: flex; justify-content: space-between; align-items: center; }
         summary::-webkit-details-marker { display: none; }
-        summary::after { 
-            content: '+'; font-size: 2.4rem; color: #94a3b8; font-weight: 300; line-height: 1; margin-top: -4px; 
-        }
+        summary::after { content: '+'; font-size: 2.4rem; color: #94a3b8; font-weight: 300; line-height: 1; margin-top: -4px; }
         details[open] summary::after { transform: rotate(45deg); color: #10b981; }
         .faq-answer { padding: 0 1.8rem 1.8rem 1.8rem; font-size: 1.5rem; color: #475569; line-height: 1.7; }
 
         /* Map UI */
         #map { width: 100%; height: 100%; z-index: 1; }
-        .filter-container {
-            position: absolute; top: 1.5rem; left: 1rem; right: 1rem; 
-            z-index: 500; pointer-events: none; 
-            display: flex; flex-direction: column; gap: 1rem;
-        }
-        .search-box {
-            pointer-events: auto; background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(8px); padding: 0.6rem; 
-            border-radius: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            display: flex; gap: 0.5rem; width: 100%; max-width: 420px; margin: 0 auto;
-            align-items: center; border: 1px solid rgba(255,255,255,0.5);
-        }
-        .search-dropdown {
-            border: none; outline: none; background: transparent;
-            font-size: 1.5rem; color: #334155; padding: 0.8rem; flex-grow: 1;
-        }
-        .search-btn {
-            background: linear-gradient(135deg, #10b981, #047857);
-            color: white; border: none; width: 4rem; height: 4rem; border-radius: 1.2rem; 
-            display: flex; justify-content: center; align-items: center; font-size: 1.8rem; 
-            box-shadow: 0 4px 6px rgba(4, 120, 87, 0.2);
-        }
-        .scroll-btn-container {
-            pointer-events: auto; display: flex; gap: 0.8rem; 
-            overflow-x: auto; width: 100%; max-width: 100%;
-            padding: 5px 20px 15px 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-        }
+        .filter-container { position: absolute; top: 1.5rem; left: 1rem; right: 1rem; z-index: 500; pointer-events: none; display: flex; flex-direction: column; gap: 1rem; }
+        .search-box { pointer-events: auto; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); padding: 0.6rem; border-radius: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); display: flex; gap: 0.5rem; width: 100%; max-width: 420px; margin: 0 auto; align-items: center; border: 1px solid rgba(255,255,255,0.5); }
+        .search-dropdown { border: none; outline: none; background: transparent; font-size: 1.5rem; color: #334155; padding: 0.8rem; flex-grow: 1; }
+        .search-btn { background: linear-gradient(135deg, #10b981, #047857); color: white; border: none; width: 4rem; height: 4rem; border-radius: 1.2rem; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; box-shadow: 0 4px 6px rgba(4, 120, 87, 0.2); }
+        .scroll-btn-container { pointer-events: auto; display: flex; gap: 0.8rem; overflow-x: auto; width: 100%; max-width: 100%; padding: 5px 20px 15px 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .scroll-btn-container::-webkit-scrollbar { display: none; }
-        .filter-btn {
-            flex: 0 0 auto; white-space: nowrap; background: white; border: 1px solid #e2e8f0;
-            padding: 0.8rem 1.6rem; border-radius: 2rem; font-size: 1.4rem; font-weight: 600; color: #64748b;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .filter-btn.active { 
-            transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border-color: transparent;
-        }
+        .filter-btn { flex: 0 0 auto; white-space: nowrap; background: white; border: 1px solid #e2e8f0; padding: 0.8rem 1.6rem; border-radius: 2rem; font-size: 1.4rem; font-weight: 600; color: #64748b; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .filter-btn.active { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border-color: transparent; }
 
         /* =========================================
            INFO POPUP / CARD
            ========================================= */
-        .info-popup-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1000; display: flex; justify-content: center; align-items: flex-end;
-            background-color: rgba(15, 23, 42, 0.3); backdrop-filter: blur(4px);
-            opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .info-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; display: flex; justify-content: center; align-items: flex-end; background-color: rgba(15, 23, 42, 0.3); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .info-popup-overlay.visible { opacity: 1; visibility: visible; }
-        .neon-border-box {
-            position: relative; width: 100%; max-height: 85vh;
-            border-radius: 2.5rem 2.5rem 0 0;
-            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            background: white; box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
-        }
+        .neon-border-box { position: relative; width: 100%; max-height: 85vh; border-radius: 2.5rem 2.5rem 0 0; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); background: white; box-shadow: 0 -10px 40px rgba(0,0,0,0.15); }
         .info-popup-overlay.visible .neon-border-box { transform: translateY(0); }
-        .info-card {
-            position: relative; z-index: 2; padding: 0 2.5rem 3rem 2.5rem;
-            display: flex; flex-direction: column; overflow-y: auto; max-height: 85vh;
-        }
-        .drag-handle {
-            width: 4rem; height: 0.5rem; background: #e2e8f0; border-radius: 1rem; margin: 1.5rem auto 2rem auto; flex-shrink: 0;
-        }
-        /* ตำแหน่งปุ่มปิด Info Card */
+        .info-card { position: relative; z-index: 2; padding: 0 2.5rem 3rem 2.5rem; display: flex; flex-direction: column; overflow-y: auto; max-height: 85vh; }
+        .drag-handle { width: 4rem; height: 0.5rem; background: #e2e8f0; border-radius: 1rem; margin: 1.5rem auto 2rem auto; flex-shrink: 0; }
         .info-close-pos { position: absolute; top: 2rem; right: 2rem; }
 
         .gallery-scroll { display: flex; overflow-x: auto; gap: 1.2rem; padding: 1.5rem 0; flex-shrink: 0; }
-        .gallery-scroll img { 
-            height: 12rem; width: auto; border-radius: 1.2rem; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
-        }
+        .gallery-scroll img { height: 12rem; width: auto; border-radius: 1.2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); cursor: pointer; }
 
-        .modern-link-card {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 1.5rem; background: white; border: 1px solid #e2e8f0;
-            border-radius: 1.5rem; text-decoration: none; position: relative; overflow: hidden;
-            transition: all 0.2s;
-        }
+        .modern-link-card { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; background: white; border: 1px solid #e2e8f0; border-radius: 1.5rem; text-decoration: none; position: relative; overflow: hidden; transition: all 0.2s; }
         .modern-link-card:active { transform: scale(0.98); background: #f8fafc; }
 
         /* =========================================
-           PDF VIEWER OVERLAY (NEW)
+           PDF VIEWER OVERLAY
            ========================================= */
-        .pdf-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 3000; /* สูงสุด */
-            background-color: rgba(15, 23, 42, 0.95);
-            display: flex; flex-direction: column;
-            opacity: 0; visibility: hidden; 
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
+        .pdf-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 3000; background-color: rgba(15, 23, 42, 0.95); display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(5px); }
         .pdf-overlay.active { opacity: 1; visibility: visible; }
-
-        .pdf-header {
-            height: 7rem; flex-shrink: 0; display: flex; 
-            align-items: center; justify-content: space-between;
-            padding: 0 2rem; background: rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
+        .pdf-header { height: 7rem; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.1); }
         .pdf-title { color: white; font-size: 2rem; font-weight: bold; font-family: 'Prompt'; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 1rem;}
-
-        .pdf-container {
-            flex: 1; width: 100%; height: 100%;
-            padding: 1rem; box-sizing: border-box;
-            background: #cbd5e1;
-        }
-        .pdf-frame {
-            width: 100%; height: 100%;
-            border: none; border-radius: 0.8rem;
-            background: white;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
+        .pdf-container { flex: 1; width: 100%; height: 100%; padding: 1rem; box-sizing: border-box; background: #cbd5e1; }
+        .pdf-frame { width: 100%; height: 100%; border: none; border-radius: 0.8rem; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 
         /* =========================================
-           LIGHTBOX
+           LIGHTBOX FOR IMAGES
            ========================================= */
-        .lightbox-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2000; background-color: rgba(15, 23, 42, 0.98);
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden; transition: all 0.3s;
-        }
+        .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5000; background-color: rgba(15, 23, 42, 0.98); display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s; }
         .lightbox-overlay.active { opacity: 1; visibility: visible; }
-        .lightbox-img { 
-            max-width: 95vw; max-height: 80vh; object-fit: contain; 
-            border-radius: 8px; transform: scale(0.95); transition: transform 0.3s ease;
-        }
+        .lightbox-img { max-width: 95vw; max-height: 80vh; object-fit: contain; border-radius: 8px; transform: scale(0.95); transition: transform 0.3s ease; }
         .lightbox-overlay.active .lightbox-img { transform: scale(1); }
         .lightbox-close-pos { position: absolute; top: 2rem; right: 2rem; }
 
         /* Desktop Adjustments */
         @media (min-width: 1024px) {
-            .game-frame { flex-direction: row; }
-            .top-nav { display: none; }
-            .left-panel-content { 
-                width: 400px; height: 100%; border-right: 1px solid #e2e8f0; 
-                display: none !important; flex-direction: column; background: white; z-index: 10; 
-                box-shadow: 4px 0 24px rgba(0,0,0,0.05); 
-            }
+            .game-frame { flex-direction: row; } .top-nav { display: none; }
+            .left-panel-content { width: 400px; height: 100%; border-right: 1px solid #e2e8f0; display: none !important; flex-direction: column; background: white; z-index: 10; box-shadow: 4px 0 24px rgba(0,0,0,0.05); }
             .left-panel-content.desktop-active { display: flex !important; animation: slideRight 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-            .desktop-switcher { 
-                flex-shrink: 0; display: flex; justify-content: center; gap: 1rem; 
-                padding: 2.5rem 0; background: white; position: sticky; top: 0; z-index: 20; 
-                border-bottom: 1px solid #f1f5f9;
-            }
-            .desktop-toggle-btn { 
-                padding: 0.8rem 2.5rem; border-radius: 3rem; background: #f1f5f9; 
-                cursor: pointer; font-size: 1.5rem; font-weight: 600; color: #64748b;
-            }
+            .desktop-switcher { flex-shrink: 0; display: flex; justify-content: center; gap: 1rem; padding: 2.5rem 0; background: white; position: sticky; top: 0; z-index: 20; border-bottom: 1px solid #f1f5f9; }
+            .desktop-toggle-btn { padding: 0.8rem 2.5rem; border-radius: 3rem; background: #f1f5f9; cursor: pointer; font-size: 1.5rem; font-weight: 600; color: #64748b; }
             .desktop-toggle-btn.active { background: #047857; color: white; }
             #view-map { display: block !important; flex: 1; position: relative; }
-            
             .info-popup-overlay { align-items: center; background-color: rgba(15, 23, 42, 0.5); }
             .neon-border-box { width: 480px; max-height: 85vh; border-radius: 2rem; transform: scale(0.95); opacity: 0; }
             .info-popup-overlay.visible .neon-border-box { transform: scale(1); opacity: 1; }
-            .drag-handle { display: none; }
-            .info-card { padding: 3rem; }
+            .drag-handle { display: none; } .info-card { padding: 3rem; }
         }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideRight { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .custom-pin div { font-family: 'Prompt', sans-serif; transition: transform 0.2s; }
         .custom-pin:hover div { transform: scale(1.15) translateY(-2px); z-index: 999; }
+
+
+        /* =========================================
+           CANDIDATE 3D CARDS (Responsive & Expandable)
+           ========================================= */
+        #candidate-viewer {
+            --box-bg: #232323; --name-color: #f8f8f8; --card-bg-text: rgba(255, 255, 255, 0.05);
+        }
+        .candidate-scroll-area {
+            flex: 1; display: flex; justify-content: center; align-items: center; padding: 1rem; width: 100%;
+        }
+        .candidate-container {
+            position: relative; display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 600px; padding: 0; gap: 1vw; transform-style: preserve-3d;
+        }
+
+        /* การใช้ระบบ "em" เป็นหน่วยหลัก ทำให้การ์ดย่อ-ขยายตัวเองได้แบบ 100% 
+           โดยรักษา 3D Effect เอาไว้ เพียงแค่เราปรับค่า font-size ตัวเดียว
+        */
+        .box {
+            position: relative; 
+            width: 30em; height: 40em; /* สัดส่วน 300x400 เมื่อ 1em = 10px */
+            border-radius: 2em; transform-style: preserve-3d; flex-shrink: 0;
+            background-color: var(--box-bg); cursor: pointer;
+            
+            /* Responsive Scaling: ปรับขนาดการ์ดเพื่อให้ 3 ใบเรียงพอดีจอโทรศัพท์ */
+            font-size: min(1.05vw, 4.5px); 
+        }
+
+        .box::before { content: "CANDIDATE"; position: absolute; top: 2em; left: 1.5em; font-size: 3em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; }
+        .box::after { content: "VOTE"; position: absolute; bottom: 2em; right: 2em; font-size: 4em; font-weight: 900; color: var(--card-bg-text); font-style: italic; opacity: 0; transition: 0.5s; font-family: 'Prompt', sans-serif; }
+        .box:hover::after, .box:hover::before { opacity: 1; }
+        
+        .box .name {
+            position: absolute; top: 0; left: 0; text-align: center; color: var(--name-color);
+            width: 100%; transform-style: preserve-3d; transform: translate3d(0, 0, 7.5em);
+            transition: 0.5s; opacity: 0; z-index: 10; font-family: 'Prompt', sans-serif; font-weight: 700;
+            font-size: 2.5em; line-height: 1.2; margin-top: 1em;
+        }
+        .box:hover .name { top: 3em; opacity: 1; }
+        
+        .box .buy {
+            position: absolute; bottom: 0; left: 50%; transform-style: preserve-3d;
+            transform: translate3d(-50%, 0, 7.5em); color: #fff; background: #333;
+            padding: 1em 2.5em; border-radius: 3em; border: none; pointer-events: none;
+            transition: 0.5s; opacity: 0; z-index: 10; font-family: 'Prompt', sans-serif; font-size: 1.4em; white-space: nowrap;
+        }
+        .box:hover .buy { bottom: 3em; opacity: 1; }
+        
+        .box .circle { position: absolute; top: 50%; left: 50%; width: 20em; height: 20em; border-radius: 50%; transition: 0.5s; background: #ffffff; transform-style: preserve-3d; z-index: 10; opacity: 1; transform: translate3d(-50%, -50%, 0px); }
+        .box:hover .circle { transform: translate3d(-50%, -50%, 3.5em); }
+        
+        .box .product { position: absolute; top: 50%; left: 50%; max-width: 25em; max-height: 28em; object-fit: contain; transition: 0.5s; z-index: 11; transform-style: preserve-3d; transform: translate3d(-50%, -50%, 0px); border-radius: 1em; }
+        .box:hover .product { transform: translate3d(-50%, -50%, 10em); }
+
+        /* 3D Borders */
+        .box.card-fx::before { position: absolute; content: ""; top: 0; left:0; width: 100%; height: 100%; border-radius: 2.25em; z-index: -1; border: 0.155em solid transparent; -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; mask-composite: exclude; font-size: unset; font-weight: unset; color: unset; font-style: unset; }
+        
+        /* 1. สีฟ้า (Blue) */
+        .box.blue { background: radial-gradient(ellipse at right top, #1da3c3ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
+        .box.blue.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #1da3c3) border-box; }
+        .box.blue .circle, .box.blue .buy { background: #1da3c3; }
+
+        /* 2. สีส้ม (Orange) */
+        .box.orange { background: radial-gradient(ellipse at right top, #f97316ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
+        .box.orange.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #f97316) border-box; }
+        .box.orange .circle, .box.orange .buy { background: #f97316; }
+
+        /* 3. สีเหลือง (Yellow) */
+        .box.yellow { background: radial-gradient(ellipse at right top, #eab308ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
+        .box.yellow.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #eab308) border-box; }
+        .box.yellow .circle, .box.yellow .buy { background: #eab308; }
+
+
+        /* =========================================
+           CARD EXPAND LIGHTBOX (เฉพาะตอนขยายการ์ด)
+           ========================================= */
+        #card-expanded-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 4000;
+            background-color: rgba(15, 23, 42, 0.95); display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(8px);
+        }
+        #card-expanded-overlay.active { opacity: 1; visibility: visible; }
+        
+        /* สั่งให้การ์ดในสถานะขยาย มีขนาดใหญ่ขึ้นด้วยการปรับ Base Font Size */
+        .box-maxi {
+            font-size: min(2.5vw, 9px) !important; /* ขยายการ์ดให้ใหญ่ขึ้น 2-3 เท่า */
+            margin: auto; cursor: default;
+        }
+        /* ซ่อนปุ่ม 'แตะเพื่อขยาย' ออกจากการ์ดที่ขยายแล้ว */
+        .box-maxi .buy { display: none !important; }
 
     </style>
 </head>
@@ -422,7 +369,7 @@
                     </div>
 
                     <div id="p-gallery" class="gallery-scroll mt-4"></div>
-
+                    
                     <a id="btn-navigate" href="#" target="_blank" 
                        class="mt-6 flex items-center justify-center gap-3 w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl text-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-transform no-underline">
                         📍 นำทางไปหน่วยเลือกตั้ง
@@ -431,7 +378,8 @@
                     <div class="mt-8 pt-6 border-t border-slate-100 pb-10">
                         <h3 class="text-2xl font-bold text-slate-800 mb-6">📄 ข้อมูลผู้สมัคร</h3>
                         <div class="grid grid-cols-1 gap-4">
-                            <div onclick="openPdfViewer('https://drive.google.com/file/d/1GPY7bU-Q6zKOZ5FkDiGERgSfSz48ch54/view?usp=sharing', 'สมาชิกสภากรุงเทพมหานคร (ส.ก.)')" 
+                            
+                            <div onclick="openCandidateViewer()" 
                                class="modern-link-card group cursor-pointer">
                                 <div>
                                     <span class="block text-2xl font-bold text-slate-800 group-hover:text-pink-600">สมาชิกสภากรุงเทพมหานคร (ส.ก.)</span>
@@ -475,6 +423,46 @@
             </div>
         </div>
 
+        <div id="candidate-viewer" class="pdf-overlay">
+            <div class="pdf-header">
+                <span class="pdf-title text-pink-400">ผู้สมัคร ส.ก. เขตคลองเตย</span>
+                <div class="close-btn-master" onclick="closeCandidateViewer()">✕</div>
+            </div>
+            
+            <div class="candidate-scroll-area">
+                <div class="candidate-container">
+                    
+                    <div class="box blue card-fx" onclick="expandCardInLightbox(this)">
+                        <h2 class="name">เบอร์ 1<br><span style="font-size:0.5em; font-weight:normal;">สุชัย พงษ์เพียรชอบ</span></h2>
+                        <button class="buy">🔍 แตะเพื่อขยาย</button>
+                        <div class="circle"></div>
+                        <img class="product" src="candidate/01.png" alt="Candidate 1" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
+                    </div>
+
+                    <div class="box orange card-fx" onclick="expandCardInLightbox(this)">
+                        <h2 class="name">เบอร์ 2<br><span style="font-size:0.5em; font-weight:normal;">พลอย เตลาน</span></h2>
+                        <button class="buy">🔍 แตะเพื่อขยาย</button>
+                        <div class="circle"></div>
+                        <img class="product" src="candidate/02.png" alt="Candidate 2" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
+                    </div>
+
+                    <div class="box yellow card-fx" onclick="expandCardInLightbox(this)">
+                        <h2 class="name">เบอร์ 3<br><span style="font-size:0.5em; font-weight:normal;">ศวนงชภรณ์ เงินดี</span></h2>
+                        <button class="buy">🔍 แตะเพื่อขยาย</button>
+                        <div class="circle"></div>
+                        <img class="product" src="candidate/03.png" alt="Candidate 3" onerror="this.onerror=null; this.src='https://placehold.co/250x280/e2e8f0/64748b?text=No+Image'"/>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="card-expanded-overlay" onclick="closeExpandedCard()">
+            <div class="close-btn-master lightbox-close-pos" onclick="closeExpandedCard()">✕</div>
+            <div id="card-expanded-content" onclick="event.stopPropagation()">
+                </div>
+        </div>
+
         <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
             <div class="close-btn-master lightbox-close-pos" onclick="closeLightbox()">✕</div>
             <img id="lightbox-img" class="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
@@ -500,10 +488,51 @@
             document.getElementById('pdf-frame').src = embedUrl;
             document.getElementById('pdf-viewer').classList.add('active');
         }
-
         function closePdfViewer() {
             document.getElementById('pdf-viewer').classList.remove('active');
             setTimeout(() => { document.getElementById('pdf-frame').src = ""; }, 300);
+        }
+
+        // ==========================================
+        // CANDIDATE VIEWER LOGIC (NEW)
+        // ==========================================
+        function openCandidateViewer() {
+            document.getElementById('candidate-viewer').classList.add('active');
+            
+            // เปิดเอฟเฟกต์ 3D ให้กับการ์ดใบเล็กทั้ง 3 ใบ
+            VanillaTilt.init(document.querySelectorAll(".candidate-container .box"), {
+                max: 15, speed: 300, easing: "cubic-bezier(.03,.98,.52,.99)", scale: 1.05
+            });
+        }
+        
+        function closeCandidateViewer() {
+            document.getElementById('candidate-viewer').classList.remove('active');
+        }
+
+        // ฟังก์ชันเมื่อผู้ใช้ "คลิกเพื่อขยาย" การ์ด 3D ทั้งใบ
+        function expandCardInLightbox(element) {
+            const container = document.getElementById('card-expanded-content');
+            
+            // ก๊อปปี้โค้ด HTML ของการ์ดใบที่กด
+            container.innerHTML = element.outerHTML; 
+            
+            const clonedCard = container.querySelector('.box');
+            clonedCard.classList.add('box-maxi'); // สั่งให้ขยายขนาด
+            clonedCard.removeAttribute('onclick'); // ป้องกันการกดซ้อนกัน
+            
+            // ฝังเอฟเฟกต์ 3D ให้กับการ์ดใบใหญ่
+            VanillaTilt.init(clonedCard, {
+                max: 15, speed: 300, easing: "cubic-bezier(.03,.98,.52,.99)", scale: 1.05
+            });
+
+            document.getElementById('card-expanded-overlay').classList.add('active');
+        }
+
+        function closeExpandedCard() {
+            document.getElementById('card-expanded-overlay').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('card-expanded-content').innerHTML = "";
+            }, 300);
         }
 
         // --- Standard Logic ---
@@ -649,53 +678,49 @@
             if (fu.length > 0) map.fitBounds(calculateBounds(fu), { padding: [50, 50] });
         }
 
-        // ==========================================
-        // แก้ไขฟังก์ชันแสดง Popup ดึงรูปภาพอัตโนมัติตามโฟลเดอร์ ID
-        // ==========================================
         function openPopup(data) {
             document.getElementById('p-name').innerText = data.name;
             document.getElementById('p-sub').innerText = data.details_range;
             document.getElementById('p-unit').innerText = data.unit_count;
             
             const gs = document.getElementById('p-gallery');
-            gs.innerHTML = ""; // ล้างรูปเก่า
+            gs.innerHTML = ""; 
 
-            // แปลง id ให้เป็น format 3 หลัก (เช่น ส่งค่ามา 1 หรือ "001" ก็จะกลายเป็น "001" เหมือนกัน)
             let folderId = String(data.id).padStart(3, '0');
             let imgIndex = 1;
 
-            // ฟังก์ชันโหลดรูปอัตโนมัติทีละรูป
             function loadNextImage() {
-                let imgNumStr = String(imgIndex).padStart(3, '0'); // กลายเป็น "001", "002"
+                let imgNumStr = String(imgIndex).padStart(3, '0'); 
                 let src = `pic/${folderId}/${imgNumStr}.jpg`;
                 
                 let img = new Image();
                 img.onload = function() {
-                    // ถ้ารูปมีอยู่จริง (โหลดสำเร็จ) ให้สร้างแท็ก img แล้วนำไปใส่ใน Gallery
                     let imgEl = document.createElement('img');
                     imgEl.src = src;
                     imgEl.onclick = () => openLightbox(src);
                     gs.appendChild(imgEl);
                     
                     imgIndex++;
-                    loadNextImage(); // เรียกซ้ำเพื่อพยายามโหลดรูปที่ 2, 3 ถัดไป
+                    loadNextImage(); 
                 };
-                img.onerror = function() {
-                    // ถ้ารูปไม่มี (Error 404) ฟังก์ชันจะหยุดทำงานที่นี่โดยอัตโนมัติ
-                };
-                img.src = src; // เริ่มกระบวนการโหลด
+                img.onerror = function() {};
+                img.src = src; 
             }
             
-            loadNextImage(); // เริ่มต้นโหลดรูปแรก
+            loadNextImage(); 
 
-            // นำทาง Google Maps
-            document.getElementById('btn-navigate').href = `http://maps.google.com/maps?q=${data.lat},${data.lng}`;
+            // แก้ไขบั๊กลิงก์ระบบนำทางของ Google Maps ให้ถูกต้อง
+            document.getElementById('btn-navigate').href = `https://www.google.com/maps/search/?api=1&query=${data.lat},${data.lng}`;
             document.getElementById('info-overlay').classList.add('visible');
         }
 
         function closePopup(e) { if (e.target.id === 'info-overlay') closePopupDirect(); }
         function closePopupDirect() { document.getElementById('info-overlay').classList.remove('visible'); }
-        function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('active'); }
+        
+        function openLightbox(src) { 
+            document.getElementById('lightbox-img').src = src; 
+            document.getElementById('lightbox').classList.add('active'); 
+        }
         function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
 
         window.addEventListener('load', () => { 
