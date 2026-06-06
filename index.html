@@ -207,28 +207,22 @@
             font-size: min(1.05vw, 4.5px); 
         }
 
-        /* ลายน้ำด้านหลัง (Background text) - เอาออกแล้วตามคำสั่ง */
-        /* .box::before { ... } */
-        /* .box::after { ... } */
-        
-        /* BANNER OVERLAY - แก้ไขให้คงสัดส่วนเดิม 100% ไม่ผิดเพี้ยน */
         .box .card-banner {
             display: none;
         }
         .box-maxi .card-banner {
             display: block;
             position: absolute;
-            bottom: 0; /* ให้อยู่ล่างสุด */
+            bottom: 0;
             left: 0;
-            width: 100%; /* กว้างเต็มการ์ด */
-            height: auto; /* ความสูงปรับอัตโนมัติตามสัดส่วนจริงของรูป (ไม่เพี้ยนแน่นอน) */
-            border-bottom-left-radius: 2em; /* โค้งตามมุมการ์ดล่างซ้าย */
-            border-bottom-right-radius: 2em; /* โค้งตามมุมการ์ดล่างขวา */
-            z-index: 50; /* อยู่หน้าสุด */
+            width: 100%;
+            height: auto;
+            border-bottom-left-radius: 2em;
+            border-bottom-right-radius: 2em;
+            z-index: 50;
             pointer-events: none;
         }
         
-        /* 1. จัดการ "เบอร์" ให้อยู่ด้านบน ไม่เลื่อนขึ้นลง */
         .box .number {
             position: absolute; top: 1.5em; left: 0; width: 100%; 
             text-align: center; color: #ffffff; /* สีขาว */
@@ -237,40 +231,33 @@
             transition: 0.5s; z-index: 12; text-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
         
-        /* 2. จัดการ "ชื่อ" ให้อยู่ด้านล่าง ไม่เลื่อนขึ้นลง */
         .box .name {
             position: absolute; bottom: 1.5em; left: 0; width: 100%; 
-            text-align: center; color: #ffffff; /* สีขาว */
+            text-align: center; color: #ffffff;
             font-family: 'Prompt', sans-serif; font-weight: 500; font-size: 1.8em; margin: 0;
-            padding: 0 1em; box-sizing: border-box; /* ป้องกันการล้นขอบ */
+            padding: 0 1em; box-sizing: border-box;
             transform-style: preserve-3d; transform: translate3d(0, 0, 7.5em);
             transition: 0.5s; z-index: 12; text-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
         
-        /* วงกลม Effect พื้นหลังรูป */
         .box .circle { position: absolute; top: 50%; left: 50%; width: 20em; height: 20em; border-radius: 50%; transition: 0.5s; background: #ffffff; transform-style: preserve-3d; z-index: 10; opacity: 1; transform: translate3d(-50%, -50%, 0px); }
         .box:hover .circle { transform: translate3d(-50%, -50%, 3.5em); }
         
-        /* รูปผู้สมัคร */
         .box .product { 
             position: absolute; top: 50%; left: 50%; 
-            max-width: 26em; max-height: 24em; /* บีบขนาดความสูงลงนิดหน่อยเพื่อไม่ให้บังหนังสือ */
+            max-width: 26em; max-height: 24em;
             object-fit: contain; transition: 0.5s; z-index: 11; transform-style: preserve-3d; 
             transform: translate3d(-50%, -50%, 0px); border-radius: 1em; 
         }
 
-        /* Hover Effect - เด้งออกมาด้านหน้า (Z-axis) อย่างเดียว */
         .box:hover .product { transform: translate3d(-50%, -50%, 10em); }
         .box:hover .number { transform: translate3d(0, 0, 12em); }
         .box:hover .name { transform: translate3d(0, 0, 12em); }
 
-        /* ซ่อนปุ่ม แตะเพื่อขยาย (ทำให้คลิกได้ทั้งการ์ดเลยสะอาดกว่า) */
         .box .buy { display: none; }
 
-        /* 3D Borders */
         .box.card-fx::before { position: absolute; content: ""; top: 0; left:0; width: 100%; height: 100%; border-radius: 2.25em; z-index: -1; border: 0.155em solid transparent; -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; mask-composite: exclude; font-size: unset; font-weight: unset; color: unset; font-style: unset; }
         
-        /* สีประจำเบอร์ */
         .box.blue { background: radial-gradient(ellipse at right top, #1da3c3ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
         .box.blue.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #1da3c3) border-box; }
         .box.blue .circle { background: #1da3c3; }
@@ -294,14 +281,13 @@
         }
         #card-expanded-overlay.active { opacity: 1; visibility: visible; }
         
-        /* สั่งให้การ์ดในสถานะขยาย มีขนาดใหญ่ขึ้น */
         .box-maxi {
             font-size: min(2.5vw, 9px) !important; /* ขยายการ์ดให้ใหญ่ขึ้น 2-3 เท่า */
             margin: auto; cursor: default;
         }
 
         /* =========================================
-           CANDIDATE 2 (ผู้ว่าฯ) - 6 แถว 3 คอลัมน์ (ใช้ rem)
+           CANDIDATE 2 (ผู้ว่าฯ) - 6 แถว 3 คอลัมน์
            ========================================= */
         #candidate2-viewer {
             --box-bg: #232323; --card-bg-text: rgba(255, 255, 255, 0.05);
@@ -312,20 +298,18 @@
         .candidate2-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1rem; /* ใช้ rem กำหนดระยะห่างตามสั่ง */
+            gap: 1rem;
             width: 100%; max-width: 60rem; margin: auto;
             justify-items: center;
         }
         .candidate2-container .box {
-            font-size: 0.5rem; /* ใช้ rem กำหนดขนาด box พื้นฐานให้อยู่ใน 3 คอลัมน์ได้ */
-            margin: 0; /* ล้าง margin ของเดิม */
+            font-size: 0.5rem;
+            margin: 0;
         }
-        /* สีเขียวสำหรับผู้ว่าฯ โดยเฉพาะ */
         .box.green { background: radial-gradient(ellipse at right top, #10b981ed 0%, var(--box-bg) 47%, var(--box-bg) 100%); }
         .box.green.card-fx:before { background: linear-gradient(45deg, var(--box-bg), var(--box-bg), var(--box-bg), var(--box-bg), #10b981) border-box; }
         .box.green .circle { background: #10b981; }
 
-        /* ย่อขนาดในมือถือให้ยังคง 3 คอลัมน์โดยไม่ล้นจอ */
         @media (max-width: 768px) {
             .candidate2-container { gap: 0.5rem; }
             .candidate2-container .box { font-size: 0.35rem; }
@@ -374,10 +358,9 @@
                     <div class="faq-container">
                         <details open><summary>1. ต้องเตรียมเอกสารอะไรบ้าง?</summary><div class="faq-answer">หลักฐานสำคัญที่สุดคือ <b>"บัตรประชาชน"</b> (หมดอายุก็ใช้ได้) หรือหลักฐานอื่นของทางราชการที่มีรูปถ่ายและเลขประจำตัวประชาชน เช่น ใบขับขี่, พาสปอร์ต, หรือแอปพลิเคชัน ThaID</div></details>
                     <details><summary>2. ตรวจสอบสิทธิเลือกตั้งที่ไหน?</summary><div class="faq-answer">สามารถตรวจสอบรายชื่อผู้มีสิทธิเลือกตั้งได้จากหนังสือแจ้งเจ้าบ้าน หรือผ่านเว็บไซต์ของกรมการปกครอง (Bora Portal) และแอปพลิเคชัน Smart Vote</div></details>
-                    <details><summary>3. ถ้าไม่ว่างวันจริงทำอย่างไร?</summary><div class="faq-answer">ท่านสามารถลงทะเบียน <b>"เลือกตั้งล่วงหน้า"</b> ได้ในช่วงวันที่ 20 ธ.ค. 68 - 5 ม.ค. 69 โดยสามารถยื่นคำขอต่อนายทะเบียนสำนักงานเขต หรือผ่านทางออนไลน์</div></details>
-                    <details><summary>4. คูหาเปิดกี่โมง?</summary><div class="faq-answer">คูหาเลือกตั้งเปิดให้ลงคะแนนตั้งแต่เวลา <b>08.00 น. ถึง 17.00 น.</b> โปรดวางแผนการเดินทางเพื่อไปใช้สิทธิได้ทันเวลา</div></details>
-                    <details><summary>5. กากบาทอย่างไรไม่ให้เป็นบัตรเสีย?</summary><div class="faq-answer">ทำเครื่องหมาย <b>"กากบาท (X)"</b> ลงในช่องทำเครื่องหมายเพียงเครื่องหมายเดียว ห้ามขีดเขียนข้อความอื่นหรือทำเครื่องหมายสัญลักษณ์อื่นใด</div></details>
-                    <details><summary>6. ข้อห้ามที่สำคัญในวันเลือกตั้ง</summary><div class="faq-answer">❌ ห้ามถ่ายรูปภายในคูหา หรือบัตรเลือกตั้ง<br>❌ ห้ามใส่เครื่องแต่งกายที่มีโลโก้พรรค หรือผู้สมัคร<br>❌ ห้ามแสดงบัตรเลือกตั้งให้ผู้อื่นเห็น<br>❌ ห้ามโฆษณา หาเสียง ให้ผู้สมัคร หรือพรรคการเมือง<br>❌ ห้ามกระทำการใด อันเป็นเหตุในการขัดขวางการปฏิบัติหน้าที่ของเจ้าพนักงาน หรือกระทบต่อการใช้สิทธิของผู้อื่น</div></details>
+                    <details><summary>3. คูหาเปิดกี่โมง?</summary><div class="faq-answer">คูหาเลือกตั้งเปิดให้ลงคะแนนตั้งแต่เวลา <b>08.00 น. ถึง 17.00 น.</b> โปรดวางแผนการเดินทางเพื่อไปใช้สิทธิได้ทันเวลา</div></details>
+                    <details><summary>4. กากบาทอย่างไรไม่ให้เป็นบัตรเสีย?</summary><div class="faq-answer">ทำเครื่องหมาย <b>"กากบาท (X)"</b> ลงในช่องทำเครื่องหมายเพียงเครื่องหมายเดียว ห้ามขีดเขียนข้อความอื่นหรือทำเครื่องหมายสัญลักษณ์อื่นใด</div></details>
+                    <details><summary>5. ข้อห้ามที่สำคัญในวันเลือกตั้ง</summary><div class="faq-answer">❌ ห้ามถ่ายรูปภายในคูหา หรือบัตรเลือกตั้ง<br>❌ ห้ามใส่เครื่องแต่งกายที่มีโลโก้พรรค หรือผู้สมัคร<br>❌ ห้ามแสดงบัตรเลือกตั้งให้ผู้อื่นเห็น<br>❌ ห้ามโฆษณา หาเสียง ให้ผู้สมัคร หรือพรรคการเมือง<br>❌ ห้ามกระทำการใด อันเป็นเหตุในการขัดขวางการปฏิบัติหน้าที่ของเจ้าพนักงาน หรือกระทบต่อการใช้สิทธิของผู้อื่น</div></details>
                 </div>
                     <button class="w-full py-4 mt-8 bg-slate-200 text-slate-600 rounded-2xl font-bold text-xl hover:bg-slate-300 lg:hidden" 
                         onclick="switchTab('map', document.querySelectorAll('.nav-tab')[1])">
@@ -598,7 +581,6 @@
         function openCandidateViewer() {
             document.getElementById('candidate-viewer').classList.add('active');
             
-            // เปิดเอฟเฟกต์ 3D ให้กับการ์ดใบเล็กทั้ง 3 ใบ
             VanillaTilt.init(document.querySelectorAll("#candidate-viewer .box"), {
                 max: 15, speed: 300, easing: "cubic-bezier(.03,.98,.52,.99)", scale: 1.05
             });
@@ -619,18 +601,15 @@
             document.getElementById('candidate2-viewer').classList.remove('active');
         }
 
-        // ฟังก์ชันเมื่อผู้ใช้ "คลิกเพื่อขยาย" การ์ด 3D ทั้งใบ
         function expandCardInLightbox(element) {
             const container = document.getElementById('card-expanded-content');
             
-            // ก๊อปปี้โค้ด HTML ของการ์ดใบที่กด
             container.innerHTML = element.outerHTML; 
             
             const clonedCard = container.querySelector('.box');
-            clonedCard.classList.add('box-maxi'); // สั่งให้ขยายขนาด
-            clonedCard.removeAttribute('onclick'); // ป้องกันการกดซ้อนกัน
+            clonedCard.classList.add('box-maxi');
+            clonedCard.removeAttribute('onclick');
             
-            // ฝังเอฟเฟกต์ 3D ให้กับการ์ดใบใหญ่
             VanillaTilt.init(clonedCard, {
                 max: 15, speed: 300, easing: "cubic-bezier(.03,.98,.52,.99)", scale: 1.05
             });
@@ -819,7 +798,6 @@
             
             loadNextImage(); 
 
-            // แก้ไขลิงก์ระบบนำทางของ Google Maps ให้ถูกต้อง
             document.getElementById('btn-navigate').href = `https://www.google.com/maps/search/?api=1&query=${data.lat},${data.lng}`;
             document.getElementById('info-overlay').classList.add('visible');
         }
@@ -835,7 +813,7 @@
 
         window.addEventListener('load', () => { 
             checkResponsive(); 
-            initGovCandidates(); // เรียกใช้งานการสร้างรายชื่อแคนดิเดตผู้ว่าฯ
+            initGovCandidates();
             setTimeout(() => { 
                 initTimeline(); 
                 initMap(); 
